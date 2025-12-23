@@ -8,10 +8,10 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "backend/src/"
         },
         "files": [
-            "config/database.php"
+            "backend/config/database.php"
         ]
     },
     "config": {
