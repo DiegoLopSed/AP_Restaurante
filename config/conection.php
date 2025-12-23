@@ -20,10 +20,10 @@ try {
 // ============================================================================
 
 // Obtener configuración de base de datos desde variables de entorno
-$dbHost = $_ENV['DB_HOST'] ?? 'localhost';
-$dbName = $_ENV['DB_NAME'] ?? 'restaurante_db';
-$dbUser = $_ENV['DB_USER'] ?? 'root';
-$dbPass = $_ENV['DB_PASS'] ?? ''; // Información sensible
+$dbHost = $_ENV['DB_HOST'];
+$dbName = $_ENV['DB_NAME'];
+$dbUser = $_ENV['DB_USER'];
+$dbPass = $_ENV['DB_PASS']; //! Información sensible
 
 // Inicializar variable global para conexión PDO
 $pdo = null;
