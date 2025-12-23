@@ -20,7 +20,7 @@ CREATE TABLE insumo (
     id_insumo INT AUTO_INCREMENT PRIMARY KEY,
     id_categoria INT NOT NULL,
     nombre TEXT NOT NULL,
-    stock BOOLEAN DEFAULT TRUE,
+    stock INT DEFAULT 0,
     fecha_ultimo_pedido DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
