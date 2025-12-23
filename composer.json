@@ -11,7 +11,7 @@
             "App\\": "src/"
         },
         "files": [
-            "config/conection.php"
+            "config/database.php"
         ]
     },
     "config": {
