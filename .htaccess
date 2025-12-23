@@ -1,0 +1,25 @@
+# Redirigir todo el tráfico a la carpeta public
+RewriteEngine On
+RewriteBase /AP_Restaurante/
+
+# Redirigir la raíz directamente a public/index.html
+RewriteRule ^$ public/index.html [L,R=301]
+
+# Redirigir todo lo demás a public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/AP_Restaurante/public/
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Permitir acceso a archivos estáticos
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Proteger archivos sensibles
+<FilesMatch "^(\.env|composer\.(json|lock)|\.git)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
