@@ -14,9 +14,14 @@ class CategoriaController {
      * Manejar todas las peticiones
      */
     public function handleRequest() {
+        // Limpiar cualquier salida previa
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
         $method = $_SERVER['REQUEST_METHOD'];
         
-        // Headers CORS
+        // Headers CORS (deben ir antes de cualquier salida)
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, OPTIONS');

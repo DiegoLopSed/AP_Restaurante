@@ -26,8 +26,8 @@ class Insumo {
                     ORDER BY i.nombre ASC";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            throw new Exception("Error al obtener insumos: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al obtener insumos: " . $e->getMessage());
         }
     }
     
@@ -41,7 +41,7 @@ class Insumo {
                     INNER JOIN categoria c ON i.id_categoria = c.id_categoria 
                     WHERE i.id_insumo = :id";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
             $stmt->execute();
             
             $insumo = $stmt->fetch();
@@ -50,8 +50,8 @@ class Insumo {
             }
             
             return $insumo;
-        } catch (PDOException $e) {
-            throw new Exception("Error al obtener insumo: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al obtener insumo: " . $e->getMessage());
         }
     }
     
@@ -62,26 +62,26 @@ class Insumo {
         try {
             // Validar datos requeridos
             if (empty($data['nombre']) || empty($data['id_categoria'])) {
-                throw new Exception("El nombre y la categoría son requeridos");
+                throw new \Exception("El nombre y la categoría son requeridos");
             }
             
             $sql = "INSERT INTO insumo (id_categoria, nombre, stock, fecha_ultimo_pedido) 
                     VALUES (:id_categoria, :nombre, :stock, :fecha_ultimo_pedido)";
             
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_categoria', $data['id_categoria'], PDO::PARAM_INT);
-            $stmt->bindParam(':nombre', $data['nombre'], PDO::PARAM_STR);
+            $stmt->bindParam(':id_categoria', $data['id_categoria'], \PDO::PARAM_INT);
+            $stmt->bindParam(':nombre', $data['nombre'], \PDO::PARAM_STR);
             
             // Stock: cantidad entera (por defecto 0)
             $stock = isset($data['stock']) ? (int)$data['stock'] : 0;
             if ($stock < 0) {
                 $stock = 0; // No permitir valores negativos
             }
-            $stmt->bindValue(':stock', $stock, PDO::PARAM_INT);
+            $stmt->bindValue(':stock', $stock, \PDO::PARAM_INT);
             
             // Fecha opcional
             $fecha = !empty($data['fecha_ultimo_pedido']) ? $data['fecha_ultimo_pedido'] : null;
-            $stmt->bindParam(':fecha_ultimo_pedido', $fecha, PDO::PARAM_STR);
+            $stmt->bindParam(':fecha_ultimo_pedido', $fecha, \PDO::PARAM_STR);
             
             $stmt->execute();
             
@@ -90,8 +90,8 @@ class Insumo {
                 'success' => true,
                 'message' => 'Insumo creado exitosamente'
             ];
-        } catch (PDOException $e) {
-            throw new Exception("Error al crear insumo: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al crear insumo: " . $e->getMessage());
         }
     }
     
@@ -103,7 +103,7 @@ class Insumo {
             // Verificar que el insumo existe
             $insumo = $this->getById($id);
             if (!$insumo) {
-                throw new Exception("Insumo no encontrado");
+                throw new \Exception("Insumo no encontrado");
             }
             
             // Construir query dinámicamente solo con los campos proporcionados
@@ -135,14 +135,14 @@ class Insumo {
             }
             
             if (empty($fields)) {
-                throw new Exception("No hay campos para actualizar");
+                throw new \Exception("No hay campos para actualizar");
             }
             
             $sql = "UPDATE insumo SET " . implode(', ', $fields) . " WHERE id_insumo = :id";
             $stmt = $this->db->prepare($sql);
             
             foreach ($params as $key => $value) {
-                $paramType = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $paramType = is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR;
                 $stmt->bindValue($key, $value, $paramType);
             }
             
@@ -152,8 +152,8 @@ class Insumo {
                 'success' => true,
                 'message' => 'Insumo actualizado exitosamente'
             ];
-        } catch (PDOException $e) {
-            throw new Exception("Error al actualizar insumo: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al actualizar insumo: " . $e->getMessage());
         }
     }
     
@@ -165,24 +165,24 @@ class Insumo {
             // Verificar que el insumo existe
             $insumo = $this->getById($id);
             if (!$insumo) {
-                throw new Exception("Insumo no encontrado");
+                throw new \Exception("Insumo no encontrado");
             }
             
             $sql = "DELETE FROM insumo WHERE id_insumo = :id";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
             $stmt->execute();
             
             return [
                 'success' => true,
                 'message' => 'Insumo eliminado exitosamente'
             ];
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             // Si hay una restricción de clave foránea, informar al usuario
             if ($e->getCode() == '23000') {
-                throw new Exception("No se puede eliminar el insumo porque está siendo utilizado en otras tablas");
+                throw new \Exception("No se puede eliminar el insumo porque está siendo utilizado en otras tablas");
             }
-            throw new Exception("Error al eliminar insumo: " . $e->getMessage());
+            throw new \Exception("Error al eliminar insumo: " . $e->getMessage());
         }
     }
     
@@ -194,8 +194,8 @@ class Insumo {
             $sql = "SELECT id_categoria, nombre, descripcion FROM categoria ORDER BY nombre ASC";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            throw new Exception("Error al obtener categorías: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al obtener categorías: " . $e->getMessage());
         }
     }
     
@@ -210,11 +210,11 @@ class Insumo {
                     WHERE i.id_categoria = :id_categoria 
                     ORDER BY i.nombre ASC";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_categoria', $id_categoria, PDO::PARAM_INT);
+            $stmt->bindParam(':id_categoria', $id_categoria, \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            throw new Exception("Error al obtener insumos por categoría: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al obtener insumos por categoría: " . $e->getMessage());
         }
     }
     
@@ -230,11 +230,11 @@ class Insumo {
                     ORDER BY i.nombre ASC";
             $stmt = $this->db->prepare($sql);
             $searchPattern = '%' . $searchTerm . '%';
-            $stmt->bindParam(':search', $searchPattern, PDO::PARAM_STR);
+            $stmt->bindParam(':search', $searchPattern, \PDO::PARAM_STR);
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            throw new Exception("Error al buscar insumos: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error al buscar insumos: " . $e->getMessage());
         }
     }
 }

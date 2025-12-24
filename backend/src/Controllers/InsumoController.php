@@ -9,22 +9,26 @@ namespace App\Controllers;
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Models/Insumo.php';
 
-use App\Models\Insumo;
-
 class InsumoController {
     private $model;
     
     public function __construct() {
-        $this->model = new Insumo();
+        // Usar el nombre completo de la clase con namespace
+        $this->model = new \App\Models\Insumo();
     }
     
     /**
      * Manejar todas las peticiones
      */
     public function handleRequest() {
+        // Limpiar cualquier salida previa
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
         $method = $_SERVER['REQUEST_METHOD'];
         
-        // Headers CORS
+        // Headers CORS (deben ir antes de cualquier salida)
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');

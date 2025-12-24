@@ -4,6 +4,11 @@
  * Sistema de Gestión de Restaurante
  */
 
+// Desactivar mostrar errores aquí también por si se carga directamente
+if (!ini_get('display_errors')) {
+    ini_set('display_errors', 0);
+}
+
 // Cargar el autoload de Composer (require_once protege contra múltiples cargas)
 require_once __DIR__ . '/../../vendor/autoload.php';
 
