@@ -1,0 +1,20 @@
+# Archivo de variables de entorno (contiene información sensible)
+.env
+
+# Dependencias de Composer
+/vendor/
+composer.lock
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log

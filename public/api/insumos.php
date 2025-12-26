@@ -1,0 +1,58 @@
+<?php
+/**
+ * API REST para gestión de insumos
+ * Endpoint público que delega al controlador
+ */
+
+// IMPORTANTE: Esto debe ser lo primero, antes de CUALQUIER otra cosa
+// Configurar error handler personalizado para capturar todos los errores
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    // Convertir errores a excepciones para que se capturen en el catch
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+});
+
+// Desactivar completamente la salida de errores en pantalla
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+ini_set('log_errors', 1);
+
+// Iniciar buffer de salida ANTES de cualquier require
+ob_start();
+
+try {
+    require_once __DIR__ . '/../../backend/src/Controllers/InsumoController.php';
+    
+    // Limpiar cualquier salida capturada
+    ob_clean();
+    
+    // Usar el nombre completo de la clase en lugar de 'use'
+    $controller = new \App\Controllers\InsumoController();
+    $controller->handleRequest();
+    
+} catch (Throwable $e) {
+    // Limpiar cualquier salida previa (incluyendo errores de PHP)
+    ob_clean();
+    
+    // Capturar cualquier error y devolverlo como JSON
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    
+    // En desarrollo, mostrar más detalles. En producción, solo el mensaje
+    $errorResponse = [
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
+    ];
+    
+    // Agregar detalles de debug solo si estamos en desarrollo
+    if (ini_get('display_errors') || $_SERVER['SERVER_NAME'] === 'localhost') {
+        $errorResponse['file'] = basename($e->getFile());
+        $errorResponse['line'] = $e->getLine();
+        $errorResponse['trace'] = array_slice(explode("\n", $e->getTraceAsString()), 0, 5);
+    }
+    
+    echo json_encode($errorResponse, JSON_UNESCAPED_UNICODE);
+}
+
+// Enviar y limpiar buffer
+ob_end_flush();

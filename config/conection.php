@@ -1,3 +1,0 @@
-<?
-echo "Conexión exitosa";
-?>

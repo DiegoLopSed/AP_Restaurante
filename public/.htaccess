@@ -1,0 +1,19 @@
+# Configuración para la carpeta pública
+
+# Habilitar reescritura de URLs
+RewriteEngine On
+RewriteBase /AP_Restaurante/public/
+
+# Permitir acceso a archivos estáticos
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|html|php)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Headers de seguridad
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
