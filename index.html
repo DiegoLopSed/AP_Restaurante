@@ -2,16 +2,177 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=public/index.html">
-    <title>Redirigiendo...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titulo del negocio - Restaurante</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="public/css/homepage.css">
+    <!-- Redirección alternativa por si es necesario -->
     <script>
         // Redirección JavaScript por si el meta refresh no funciona
-        window.location.href = 'public/index.html';
+        // window.location.href = 'public/index.html';
     </script>
 </head>
 <body>
-    <p>Redirigiendo a la aplicación...</p>
-    <p>Si no eres redirigido automáticamente, <a href="public/index.html">haz clic aquí</a>.</p>
+    <!-- Encabezado y Navegación -->
+    <header id="main-header">
+        <nav>
+            <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-menu">
+                <li><a href="public/website/pages/menu.html">Menu</a></li>
+                <li><a href="public/website/pages/contacto.html">Contacto</a></li>
+                <li><a href="public/index.html">Sistema de Gestión</a></li>
+            </ul>
+            <div class="header-buttons">
+                <button type="button">Sign in</button>
+                <button type="button">Register</button>
+            </div>
+        </nav>
+        <!-- Overlay para cerrar el menú móvil -->
+        <div class="menu-overlay" id="menu-overlay"></div>
+    </header>
+
+    <!-- Sección Hero -->
+    <section class="hero">
+        <h1 class="animate__animated animate__fadeInUp">Titulo del negocio</h1>
+    </section>
+
+    <!-- Sección de Presentación -->
+    <section class="presentacion">
+        <div>
+            <h2>Presentación</h2>
+            <p>Body text for your whole article or post...</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        </div>
+        <div>
+            <img src="#" alt="Plato destacado del restaurante">
+        </div>
+    </section>
+
+    <!-- Sección de Principales Comidas -->
+    <section class="principales-comidas">
+        <h2>Principales comidas</h2>
+        <div class="comidas-grid">
+            <article>
+                <img src="#" alt="Sushi">
+                <h3>Subtitulo</h3>
+                <p>Descripcion general de producto</p>
+            </article>
+            <article>
+                <img src="#" alt="Carne">
+                <h3>Subtitulo</h3>
+                <p>Descripcion general de producto</p>
+            </article>
+            <article>
+                <img src="#" alt="Alitas">
+                <h3>Subtitulo</h3>
+                <p>Descripcion general de producto</p>
+            </article>
+        </div>
+        <button type="button">¡Conoce todo el menú!</button>
+    </section>
+
+    <!-- Sección de Información del Negocio -->
+    <section class="informacion-negocio">
+        <div class="horarios-visitanos">
+            <div class="horarios-container">
+                <h2>Horarios de atención</h2>
+                <div class="horarios-lista">
+                    <div class="horario-item">
+                        <span class="dia">LUNES</span>
+                        <span class="horas">10:00 A 19:00 HS</span>
+                    </div>
+                    <div class="horario-item">
+                        <span class="dia">MARTES</span>
+                        <span class="horas">10:00 A 19:00 HS</span>
+                    </div>
+                    <div class="horario-item">
+                        <span class="dia">MIÉRCOLES</span>
+                        <span class="horas">10:00 A 19:00 HS</span>
+                    </div>
+                    <div class="horario-item">
+                        <span class="dia">JUEVES</span>
+                        <span class="horas">10:00 A 19:00 HS</span>
+                    </div>
+                    <div class="horario-item">
+                        <span class="dia">VIERNES</span>
+                        <span class="horas">10:00 A 19:00 HS</span>
+                    </div>
+                    <div class="horario-item">
+                        <span class="dia">SÁBADO</span>
+                        <span class="horas">10:00 A 19:00 HS</span>
+                    </div>
+                    <div class="horario-item">
+                        <span class="dia">DOMINGO</span>
+                        <span class="horas">CERRADO</span>
+                    </div>
+                </div>
+            </div>
+            <div class="imagen-container">
+                <img src="#" alt="Imagen del restaurante">
+            </div>
+            <div class="visitanos-container">
+                <div class="visitanos-section">
+                    <h2>¡Visítanos!</h2>
+                    <p>Encuéntranos en..</p>
+                    <p>Dirección...</p>
+                </div>
+                <button type="button">Como llegar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Newsletter/Trends -->
+    <section class="newsletter">
+        <h2>Sigue las ultimas novedades</h2>
+        <p>daily</p>
+    </section>
+
+    <!-- Pie de Página -->
+    <footer>
+        <div>
+            <p>Nombre del sitio</p>
+            <div>
+                <a href="#" aria-label="Facebook">F</a>
+                <a href="#" aria-label="LinkedIn">In</a>
+                <a href="#" aria-label="YouTube">YT</a>
+                <a href="#" aria-label="Instagram">IG</a>
+            </div>
+        </div>
+        <div>
+            <div>
+                <h4>Tema</h4>
+                <ul>
+                    <li><a href="#">Página</a></li>
+                    <li><a href="#">Página</a></li>
+                    <li><a href="#">Página</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Tema</h4>
+                <ul>
+                    <li><a href="#">Página</a></li>
+                    <li><a href="#">Página</a></li>
+                    <li><a href="#">Página</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Tema</h4>
+                <ul>
+                    <li><a href="#">Página</a></li>
+                    <li><a href="#">Página</a></li>
+                    <li><a href="#">Página</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="public/js/homepage.js"></script>
 </body>
 </html>
-
