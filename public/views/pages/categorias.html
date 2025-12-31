@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Insumos - Restaurante</title>
+    <title>Gestión de Categorias - Restaurante</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
         .filters {
@@ -61,8 +61,8 @@
                 <ul>
                     <li><a href="../../index.html">Inicio</a></li>
                     <li><a href="../../index.php">Estadísticas</a></li>
-                    <li><a href="insumos.html" class="active">Insumos</a></li>
-                    <li><a href="categorias.html">Categorias</a></li>
+                    <li><a href="insumos.html">Insumos</a></li>
+                    <li><a href="categorias.html" class="active">Categorias</a></li>
                     <li><a href="empleados.html">Empleados</a></li>
                     <li><a href="inventario.html">Inventario</a></li>
                     <li><a href="aboutus.html">Sobre Nosotros</a></li>
@@ -73,65 +73,38 @@
 
     <main class="container">
         <section class="welcome">
-            <h2>Gestión de Insumos</h2>
-            <p>Administre los insumos del restaurante</p>
+            <h2>Gestión de Categorias</h2>
+            <p>Administre las categorias de los insumos</p>
         </section>
 
         <section class="table-container mt-2">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3>Lista de Insumos</h3>
-                <button class="btn" onclick="mostrarFormulario()">Agregar Insumo</button>
+                <h3>Lista de Categorias</h3>
+                <button class="btn" onclick="mostrarFormulario()">Agregar Categoria</button>
             </div>
 
             <!-- Filtros -->
             <div class="filters">
                 <div class="filter-group">
                     <label for="buscar">Buscar:</label>
-                    <input type="text" id="buscar" placeholder="Buscar por nombre..." onkeyup="filtrarInsumos()">
-                </div>
-                <div class="filter-group">
-                    <label for="filtroCategoria">Categoría:</label>
-                    <select id="filtroCategoria" onchange="filtrarInsumos()">
-                        <option value="">Todas las categorías</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filtroStock">Filtrar por Stock:</label>
-                    <select id="filtroStock" onchange="filtrarInsumos()">
-                        <option value="">Todos</option>
-                        <option value="con_stock">Con Stock (>0)</option>
-                        <option value="sin_stock">Sin Stock (=0)</option>
-                    </select>
+                    <input type="text" id="buscar" placeholder="Buscar por nombre o descripción..." onkeyup="filtrarCategorias()">
                 </div>
             </div>
 
-            <!-- Formulario de Insumo (oculto por defecto) -->
+            <!-- Formulario de Categoria (oculto por defecto) -->
             <div id="formInsumo" style="display: none; background-color: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-                <h3 id="formTitulo">Agregar Nuevo Insumo</h3>
+                <h3 id="formTitulo">Agregar Nueva Categoría</h3>
                 <form id="insumoForm">
-                    <input type="hidden" id="id_insumo" name="id_insumo">
+                    <input type="hidden" id="id_categoria" name="id_categoria">
                     
                     <div class="form-group">
-                        <label for="nombre">Nombre del Insumo: *</label>
+                        <label for="nombre">Nombre de la Categoría: *</label>
                         <input type="text" id="nombre" name="nombre" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="id_categoria">Categoría: *</label>
-                        <select id="id_categoria" name="id_categoria" required>
-                            <option value="">Seleccione una categoría</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="stock">Cantidad en Stock:</label>
-                        <input type="number" id="stock" name="stock" min="0" value="0" required>
-                        <small style="color: #666; font-size: 0.875rem;">Número de piezas disponibles</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fecha_ultimo_pedido">Fecha del Último Pedido:</label>
-                        <input type="date" id="fecha_ultimo_pedido" name="fecha_ultimo_pedido">
+                        <label for="descripcion">Descripción:</label>
+                        <textarea id="descripcion" name="descripcion" rows="3" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"></textarea>
                     </div>
                     
                     <div class="actions">
@@ -141,23 +114,21 @@
                 </form>
             </div>
 
-            <!-- Tabla de Insumos -->
+            <!-- Tabla de Categorías -->
             <div style="overflow-x: auto;">
-                <table id="tablaInsumos">
+                <table id="tablaCategorias">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Categoría</th>
-                            <th>Cantidad en Stock</th>
-                            <th>Último Pedido</th>
+                            <th>Descripción</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="insumosBody">
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 2rem;">
-                                Cargando insumos...
+                            <td colspan="4" style="text-align: center; padding: 2rem;">
+                                Cargando categorías...
                             </td>
                         </tr>
                     </tbody>
@@ -172,7 +143,7 @@
         </div>
     </footer>
 
-    <script src="../../js/insumos.js"></script>
+    <script src="../../js/categorias.js"></script>
 </body>
 </html>
 
