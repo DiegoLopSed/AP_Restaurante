@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú - Restaurante</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+  
+  <!-- CSS para header y footer de homepage -->
+  <link rel="stylesheet" href="../../css/homepage.css">
+  
+  <style>
+    /* Ajustes para que el contenido no quede oculto bajo el header fijo */
+    body.menu-page {
+      padding-top: 80px;
+    }
+    
+    /* Asegurar que el header tenga fondo negro */
+    body.menu-page #main-header,
+    body.menu-page #header header,
+    body.menu-page header {
+      background-color: #000000 !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Sobrescribir estilos de nav */
+    body.menu-page #main-header nav,
+    body.menu-page #header header nav,
+    body.menu-page header nav,
+    body.menu-page nav {
+      background-color: transparent !important;
+      background: transparent !important;
+    }
+    
+    /* Asegurar que el footer tenga fondo negro */
+    body.menu-page #footer footer,
+    body.menu-page footer {
+      background-color: #000000 !important;
+      background: #000000 !important;
+      color: #ffffff !important;
+    }
+    
+    /* Estilos para el menú ul en desktop */
+    body.menu-page #main-header nav ul,
+    body.menu-page #header header nav ul,
+    body.menu-page header nav ul {
+      display: flex !important;
+      gap: var(--spacing-md) !important;
+    }
+    
+    /* Botón hamburguesa oculto en desktop */
+    body.menu-page #main-header .menu-toggle,
+    body.menu-page #header header .menu-toggle,
+    body.menu-page header .menu-toggle {
+      display: none !important;
+    }
+    
+    /* Estilos para móvil */
+    @media screen and (max-width: 768px) {
+      /* Botón hamburguesa visible en móvil */
+      body.menu-page #main-header .menu-toggle,
+      body.menu-page #header header .menu-toggle,
+      body.menu-page header .menu-toggle {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-around !important;
+        width: 30px !important;
+        height: 30px !important;
+        background: transparent !important;
+        border: none !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        z-index: 1001 !important;
+      }
+      
+      /* Menú oculto inicialmente en móvil */
+      body.menu-page #main-header nav ul,
+      body.menu-page #header header nav ul,
+      body.menu-page header nav ul {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 70% !important;
+        max-width: 300px !important;
+        height: 100vh !important;
+        flex-direction: column !important;
+        background: linear-gradient(to bottom, #000000, #2d2d2d, #404040) !important;
+        padding: var(--spacing-xl) var(--spacing-md) !important;
+        padding-top: calc(var(--spacing-xl) + 60px) !important;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5) !important;
+        z-index: 999 !important;
+        transition: left var(--transition-normal) !important;
+        overflow-y: auto !important;
+        margin: 0 !important;
+        list-style: none !important;
+      }
+      
+      /* Menú activo en móvil */
+      body.menu-page #main-header nav ul.active,
+      body.menu-page #header header nav ul.active,
+      body.menu-page header nav ul.active {
+        display: flex !important;
+        left: 0 !important;
+      }
+      
+      /* Overlay para el menú móvil */
+      body.menu-page .menu-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        z-index: 998 !important;
+        opacity: 0 !important;
+        transition: opacity var(--transition-normal) !important;
+        display: none !important;
+      }
+      
+      body.menu-page .menu-overlay.active {
+        display: block !important;
+        opacity: 1 !important;
+      }
+      
+      /* Botones del header en móvil */
+      body.menu-page #main-header nav .header-buttons,
+      body.menu-page #header header nav .header-buttons,
+      body.menu-page header nav .header-buttons {
+        display: none !important;
+      }
+      
+      body.menu-page #main-header nav ul.active ~ .header-buttons,
+      body.menu-page #header header nav ul.active ~ .header-buttons,
+      body.menu-page header nav ul.active ~ .header-buttons {
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        top: auto !important;
+        bottom: var(--spacing-lg) !important;
+        left: 0 !important;
+        width: 70% !important;
+        max-width: 300px !important;
+        padding: 0 var(--spacing-md) !important;
+        gap: var(--spacing-sm) !important;
+        z-index: 999 !important;
+      }
+    }
+    
+    /* Asegurar que los enlaces del header sean blancos */
+    body.menu-page #main-header nav ul li a,
+    body.menu-page #header header nav ul li a,
+    body.menu-page header nav ul li a {
+      color: #ffffff !important;
+    }
+    
+    /* Ajustar estilos de los botones del header */
+    body.menu-page #main-header nav .header-buttons button,
+    body.menu-page #header header nav .header-buttons button {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+
+<body class="menu-page">
+
+  <!-- HEADER reutilizado -->
+  <div id="header"></div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="menu-main">
+    <!-- Título principal -->
+    <h1 class="menu-title">Menú</h1>
+    
+    <!-- Filtros de categorías -->
+    <div class="menu-filters">
+      <button class="filter-btn active" data-filter="todo">Todo</button>
+      <button class="filter-btn" data-filter="entradas">Entradas</button>
+      <button class="filter-btn" data-filter="platos-fuertes">Platos fuertes</button>
+      <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+      <button class="filter-btn" data-filter="postres">Postres</button>
+    </div>
+    
+    <!-- Sección Más vendidos -->
+    <section class="menu-section">
+      <h2 class="menu-section-title">Más vendidos</h2>
+      
+      <div class="menu-grid" id="menu-grid">
+        <!-- Productos -->
+        <article class="menu-item" data-category="bebidas">
+          <div class="menu-item-image">
+            <img src="#" alt="Classic">
+          </div>
+          <div class="menu-item-content">
+            <h3 class="menu-item-title">Classic</h3>
+            <p class="menu-item-description">Lorem ipsum dolor sit amet</p>
+            <div class="menu-item-price">$10</div>
+          </div>
+        </article>
+        
+        <article class="menu-item" data-category="bebidas">
+          <div class="menu-item-image">
+            <img src="#" alt="Vanilla Bean Larem">
+          </div>
+          <div class="menu-item-content">
+            <h3 class="menu-item-title">Vanilla Bean Larem</h3>
+            <p class="menu-item-description">Lorem ipsum dolor sit amet</p>
+            <div class="menu-item-price">$8</div>
+          </div>
+        </article>
+        
+        <article class="menu-item" data-category="bebidas">
+          <div class="menu-item-image">
+            <img src="#" alt="Spiced Chai">
+          </div>
+          <div class="menu-item-content">
+            <h3 class="menu-item-title">Spiced Chai</h3>
+            <p class="menu-item-description">Lorem ipsum dolor sit amet</p>
+            <div class="menu-item-price">$9</div>
+          </div>
+        </article>
+        
+        <article class="menu-item" data-category="bebidas">
+          <div class="menu-item-image">
+            <img src="#" alt="Cold Brew Concentrat">
+          </div>
+          <div class="menu-item-content">
+            <h3 class="menu-item-title">Cold Brew Concentrat</h3>
+            <p class="menu-item-description">Lorem ipsum dolor sit amet</p>
+            <div class="menu-item-price">$6</div>
+          </div>
+        </article>
+        
+        <article class="menu-item" data-category="bebidas">
+          <div class="menu-item-image">
+            <img src="#" alt="Cappuccino">
+          </div>
+          <div class="menu-item-content">
+            <h3 class="menu-item-title">Cappuccino</h3>
+            <p class="menu-item-description">Lorem ipsum dolor sit amet</p>
+            <div class="menu-item-price">$5</div>
+          </div>
+        </article>
+        
+        <article class="menu-item" data-category="bebidas">
+          <div class="menu-item-image">
+            <img src="#" alt="Mocha Swirl">
+          </div>
+          <div class="menu-item-content">
+            <h3 class="menu-item-title">Mocha Swirl</h3>
+            <p class="menu-item-description">Lorem ipsum dolor sit amet</p>
+            <div class="menu-item-price">$7</div>
+          </div>
+        </article>
+      </div>
+      
+      <!-- Call to action -->
+      <div class="menu-cta">
+        <p class="menu-cta-text">Explora nuestros principales platillos!</p>
+        <button class="menu-cta-button" type="button">
+          <span>→</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER reutilizado -->
+  <div id="footer"></div>
+
+  <!-- JS -->
+  <script src="../../js/components.js"></script>
+
+  <!-- SCRIPT SOLO PARA ESTA PÁGINA -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Función para modificar el header después de cargar los componentes
+      const modifyHeader = () => {
+        const headerDiv = document.querySelector("#header");
+        if (!headerDiv || !headerDiv.querySelector("header")) {
+          setTimeout(modifyHeader, 50);
+          return;
+        }
+
+        const header = headerDiv.querySelector("header");
+        header.id = "main-header";
+        
+        const nav = header.querySelector("nav");
+        if (!nav) {
+          setTimeout(modifyHeader, 50);
+          return;
+        }
+
+        // Agregar botón hamburguesa si no existe
+        let menuToggle = nav.querySelector(".menu-toggle");
+        if (!menuToggle) {
+          menuToggle = document.createElement("button");
+          menuToggle.className = "menu-toggle";
+          menuToggle.id = "menu-toggle";
+          menuToggle.type = "button";
+          menuToggle.setAttribute("aria-label", "Abrir menú");
+          menuToggle.innerHTML = '<span></span><span></span><span></span>';
+          nav.insertBefore(menuToggle, nav.firstChild);
+        }
+
+        const navList = nav.querySelector("ul");
+        if (navList) {
+          navList.id = "nav-menu";
+          // Reemplazar las opciones del nav: "Menu" por "Inicio", mantener "Contacto", quitar "Sistema de Gestión"
+          navList.innerHTML = '<li><a href="../../../index.html">Inicio</a></li><li><a href="contacto.html">Contacto</a></li>';
+        }
+
+        const buttonsDiv = nav.querySelector("div");
+        if (buttonsDiv) {
+          buttonsDiv.classList.add("header-buttons");
+          const buttons = buttonsDiv.querySelectorAll("button");
+          buttons.forEach(btn => {
+            if (!btn.getAttribute("type")) {
+              btn.setAttribute("type", "button");
+            }
+          });
+        }
+
+        let menuOverlay = header.querySelector(".menu-overlay");
+        if (!menuOverlay) {
+          menuOverlay = document.createElement("div");
+          menuOverlay.className = "menu-overlay";
+          menuOverlay.id = "menu-overlay";
+          header.appendChild(menuOverlay);
+        }
+      };
+
+      // Función para inicializar el menú móvil
+      const initMobileMenu = () => {
+        const menuToggle = document.getElementById("menu-toggle");
+        const navMenu = document.getElementById("nav-menu");
+        const menuOverlay = document.getElementById("menu-overlay");
+        const headerButtons = document.querySelector(".header-buttons");
+
+        if (!menuToggle || !navMenu || !menuOverlay) return;
+        if (menuToggle.dataset.initialized === "true") return;
+
+        function openMenu() {
+          menuToggle.classList.add("active");
+          navMenu.classList.add("active");
+          menuOverlay.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+
+        function closeMenu() {
+          menuToggle.classList.remove("active");
+          navMenu.classList.remove("active");
+          menuOverlay.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+
+        menuToggle.addEventListener("click", function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          if (navMenu.classList.contains("active")) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+
+        menuOverlay.addEventListener("click", closeMenu);
+
+        const navLinks = navMenu.querySelectorAll("a");
+        navLinks.forEach(link => {
+          link.addEventListener("click", function() {
+            if (window.innerWidth <= 768) {
+              closeMenu();
+            }
+          });
+        });
+
+        if (headerButtons) {
+          const buttons = headerButtons.querySelectorAll("button");
+          buttons.forEach(button => {
+            button.addEventListener("click", function() {
+              if (window.innerWidth <= 768) {
+                closeMenu();
+              }
+            });
+          });
+        }
+
+        window.addEventListener("resize", function() {
+          if (window.innerWidth > 768) {
+            closeMenu();
+          }
+        });
+
+        menuToggle.dataset.initialized = "true";
+      };
+
+      const tryModify = () => {
+        modifyHeader();
+        
+        const header = document.getElementById("main-header");
+        const menuToggle = document.getElementById("menu-toggle");
+        const navMenu = document.getElementById("nav-menu");
+        const menuOverlay = document.getElementById("menu-overlay");
+        
+        if (header && menuToggle && navMenu && menuOverlay) {
+          header.classList.add("scrolled");
+          initMobileMenu();
+          return true;
+        }
+        return false;
+      };
+
+      let attempts = 0;
+      const maxAttempts = 20;
+      const interval = setInterval(() => {
+        attempts++;
+        if (tryModify() || attempts >= maxAttempts) {
+          clearInterval(interval);
+        }
+      }, 100);
+      
+      setTimeout(tryModify, 100);
+      setTimeout(tryModify, 300);
+      setTimeout(tryModify, 500);
+      setTimeout(tryModify, 800);
+
+      // Filtrado de productos
+      const filterButtons = document.querySelectorAll(".filter-btn");
+      const menuItems = document.querySelectorAll(".menu-item");
+
+      filterButtons.forEach(button => {
+        button.addEventListener("click", function() {
+          // Remover clase active de todos los botones
+          filterButtons.forEach(btn => btn.classList.remove("active"));
+          // Agregar clase active al botón clickeado
+          this.classList.add("active");
+          
+          const filter = this.getAttribute("data-filter");
+          
+          menuItems.forEach(item => {
+            if (filter === "todo" || item.getAttribute("data-category") === filter) {
+              item.style.display = "block";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
+
