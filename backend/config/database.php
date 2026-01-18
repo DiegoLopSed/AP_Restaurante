@@ -34,6 +34,12 @@ if (!defined('DB_CONFIG_LOADED')) {
     define('DB_NAME', $_ENV['DB_NAME']);
     define('DB_CHARSET', $_ENV['DB_CHARSET']);
     
+    // Clave de cifrado (opcional, se generará automáticamente si no existe)
+    if (!isset($_ENV['ENCRYPTION_KEY'])) {
+        // Generar una clave temporal (en producción debe estar en .env)
+        $_ENV['ENCRYPTION_KEY'] = hash('sha256', 'clave_temporal_cambiar_en_produccion_' . DB_NAME);
+    }
+    
     define('DB_CONFIG_LOADED', true);
 }
 

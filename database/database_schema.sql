@@ -159,6 +159,52 @@ CREATE TABLE factura_producto (
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tabla: Registro: registro de usuarios
+CREATE TABLE registro (
+    id_registro INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    rfc VARCHAR(20) NOT NULL UNIQUE,
+    curp VARCHAR(18) NOT NULL UNIQUE,
+    correo VARCHAR(255) NOT NULL UNIQUE,
+    telefono VARCHAR(15) NOT NULL, 
+    contrasena VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla: Empleado: registro de empleados va relacionar con la tabla registro
+CREATE TABLE empleado (
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
+
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    cargo ENUM(
+        'Mesero',
+        'Cocinero',
+        'Cajero',
+        'Gerente',
+        'Limpieza'
+    ) NOT NULL,
+
+    telefono VARCHAR(15) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+
+    fecha_contratacion DATE NOT NULL,
+    salario DECIMAL(10,2) NOT NULL,
+
+    id_registro INT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_empleado_registro
+        FOREIGN KEY (id_registro)
+        REFERENCES registro(id_registro)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- =====================================================
 -- ÍNDICES ADICIONALES PARA OPTIMIZACIÓN
 -- =====================================================
@@ -171,6 +217,10 @@ CREATE INDEX idx_pedido_metodo_pago ON pedido(id_metodo_pago);
 CREATE INDEX idx_pedido_fecha ON pedido(fecha);
 CREATE INDEX idx_factura_pedido ON factura(id_pedido);
 CREATE INDEX idx_ingrediente_insumo ON ingrediente(id_insumo);
+CREATE INDEX idx_registro_correo ON registro(correo);
+CREATE INDEX idx_registro_rfc ON registro(rfc);
+CREATE INDEX idx_registro_curp ON registro(curp);
+CREATE INDEX idx_empleado_registro ON empleado(id_registro);
 
 -- Insertar categorías de ejemplo
 INSERT INTO categoria (nombre, descripcion) VALUES
