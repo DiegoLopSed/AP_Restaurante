@@ -262,3 +262,186 @@ footer {
     color: #0c5460;
     border: 1px solid #bee5eb;
 }
+/* ===============================
+   CONTACTO - ESTILOS
+================================ */
+
+.contact-container {
+    max-width: 600px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.contact-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 26px;
+    font-family: inherit;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* BOTÓN NEGRO */
+.contact-container button {
+    width: 100%;
+    padding: 14px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.contact-container button:hover {
+    background: #222;
+}
+
+/* OCULTAR CONTACTO SOLO EN ESTA PÁGINA */
+body.contact-page nav a[href*="contacto"] {
+    display: none;
+}
+
+  /* =========================
+   NAVBAR
+========================= */
+
+nav {
+    background-color: #2c3e50;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  nav ul li a:hover {
+    text-decoration: underline;
+  }
+  
+  nav > div {
+    display: flex;
+    gap: 10px;
+  }
+  
+  nav button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  nav button:first-child {
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+  }
+  
+  nav button:last-child {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  /* =========================
+     FOOTER
+  ========================= */
+  
+  footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 40px 30px;
+    margin-top: 80px;
+  }
+  
+  footer > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  footer p {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  footer a {
+    color: white;
+    margin-right: 10px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  footer a:hover {
+    text-decoration: underline;
+  }
+  
+  footer > div:last-child {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 30px;
+  }
+  
+  footer h4 {
+    margin-bottom: 10px;
+  }
+  
+  footer ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  footer ul li {
+    margin-bottom: 6px;
+  }
+  
+  footer ul li a {
+    color: white;
+    opacity: 0.85;
+  }
+  
+  footer ul li a:hover {
+    opacity: 1;
+  }
+  
