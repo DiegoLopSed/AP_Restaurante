@@ -5,14 +5,236 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contacto</title>
 
-  <!-- CSS general -->
+  <!-- CSS para header y footer de homepage -->
+  <link rel="stylesheet" href="../../css/homepage.css">
+  <!-- CSS general para el formulario -->
   <link rel="stylesheet" href="../../css/styles.css">
+  <style>
+    /* Ajustes para que el contenido no quede oculto bajo el header fijo */
+    body.contact-page {
+      padding-top: 80px;
+    }
+    
+    /* Asegurar que el header tenga fondo negro - sobrescribir styles.css */
+    body.contact-page #main-header,
+    body.contact-page #header header,
+    body.contact-page header {
+      background-color: #000000 !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Sobrescribir estilos de nav que puedan tener fondo diferente (styles.css usa #2c3e50) */
+    body.contact-page #main-header nav,
+    body.contact-page #header header nav,
+    body.contact-page header nav,
+    body.contact-page nav {
+      background-color: transparent !important;
+      background: transparent !important;
+    }
+    
+    /* Asegurar que el menú ul se comporte correctamente en desktop (homepage.css) */
+    body.contact-page #main-header nav ul,
+    body.contact-page #header header nav ul,
+    body.contact-page header nav ul {
+      display: flex !important;
+      gap: var(--spacing-md) !important;
+    }
+    
+    /* Asegurar que el botón hamburguesa esté oculto en desktop */
+    body.contact-page #main-header .menu-toggle,
+    body.contact-page #header header .menu-toggle,
+    body.contact-page header .menu-toggle {
+      display: none !important;
+    }
+    
+    /* Estilos para móvil - asegurar que el menú responsivo funcione */
+    @media screen and (max-width: 768px) {
+      /* Botón hamburguesa visible en móvil */
+      body.contact-page #main-header .menu-toggle,
+      body.contact-page #header header .menu-toggle,
+      body.contact-page header .menu-toggle {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-around !important;
+        width: 30px !important;
+        height: 30px !important;
+        background: transparent !important;
+        border: none !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        z-index: 1001 !important;
+      }
+      
+      /* Menú oculto inicialmente en móvil (estilos de homepage.css) */
+      body.contact-page #main-header nav ul,
+      body.contact-page #header header nav ul,
+      body.contact-page header nav ul {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 70% !important;
+        max-width: 300px !important;
+        height: 100vh !important;
+        flex-direction: column !important;
+        background: linear-gradient(to bottom, #000000, #2d2d2d, #404040) !important;
+        padding: var(--spacing-xl) var(--spacing-md) !important;
+        padding-top: calc(var(--spacing-xl) + 60px) !important;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5) !important;
+        z-index: 999 !important;
+        transition: left var(--transition-normal) !important;
+        overflow-y: auto !important;
+        margin: 0 !important;
+        list-style: none !important;
+      }
+      
+      /* Menú activo en móvil */
+      body.contact-page #main-header nav ul.active,
+      body.contact-page #header header nav ul.active,
+      body.contact-page header nav ul.active {
+        display: flex !important;
+        left: 0 !important;
+      }
+      
+      /* Estilos para los items del menú en móvil */
+      body.contact-page #main-header nav ul li,
+      body.contact-page #header header nav ul li,
+      body.contact-page header nav ul li {
+        width: 100% !important;
+        margin-bottom: var(--spacing-md) !important;
+        display: block !important;
+      }
+      
+      /* Estilos para los enlaces en móvil */
+      body.contact-page #main-header nav ul li a,
+      body.contact-page #header header nav ul li a,
+      body.contact-page header nav ul li a {
+        display: block !important;
+        width: 100% !important;
+        padding: var(--spacing-sm) !important;
+        text-align: left !important;
+        color: #ffffff !important;
+        font-size: var(--font-size-large) !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Botones del header ocultos en móvil */
+      body.contact-page #main-header nav .header-buttons,
+      body.contact-page #header header nav .header-buttons,
+      body.contact-page header nav .header-buttons {
+        display: none !important;
+      }
+      
+      /* Botones visibles cuando el menú está activo */
+      body.contact-page #main-header nav ul.active ~ .header-buttons,
+      body.contact-page #header header nav ul.active ~ .header-buttons,
+      body.contact-page header nav ul.active ~ .header-buttons {
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        top: auto !important;
+        bottom: var(--spacing-lg) !important;
+        left: 0 !important;
+        width: 70% !important;
+        max-width: 300px !important;
+        padding: 0 var(--spacing-md) !important;
+        gap: var(--spacing-sm) !important;
+        z-index: 999 !important;
+      }
+    }
+    
+    /* Overlay para el menú móvil */
+    body.contact-page .menu-overlay {
+      display: none !important;
+    }
+    
+    @media screen and (max-width: 768px) {
+      body.contact-page .menu-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        z-index: 998 !important;
+        opacity: 0 !important;
+        transition: opacity var(--transition-normal) !important;
+      }
+      
+      body.contact-page .menu-overlay.active {
+        display: block !important;
+        opacity: 1 !important;
+      }
+    }
+    
+    /* Asegurar que el footer tenga fondo negro - sobrescribir styles.css */
+    body.contact-page #footer footer,
+    body.contact-page footer {
+      background-color: #000000 !important;
+      background: #000000 !important;
+      color: #ffffff !important;
+    }
+    
+    /* Ajustar estilos del header para que los botones se vean bien en desktop */
+    body.contact-page #main-header nav .header-buttons button,
+    body.contact-page #header header nav .header-buttons button {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: #ffffff !important;
+    }
+    
+    body.contact-page #main-header nav .header-buttons button:first-child,
+    body.contact-page #header header nav .header-buttons button:first-child {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    body.contact-page #main-header nav .header-buttons button:hover,
+    body.contact-page #header header nav .header-buttons button:hover {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    /* Estilos para los botones en el menú móvil activo */
+    @media screen and (max-width: 768px) {
+      body.contact-page #main-header nav ul.active ~ .header-buttons button,
+      body.contact-page #header header nav ul.active ~ .header-buttons button,
+      body.contact-page header nav ul.active ~ .header-buttons button {
+        width: 100% !important;
+        padding: var(--spacing-sm) !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 4px !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+      }
+    }
+    
+    /* Asegurar que los enlaces del header sean blancos en desktop */
+    body.contact-page #main-header nav ul li a,
+    body.contact-page #header header nav ul li a,
+    body.contact-page header nav ul li a {
+      color: #ffffff !important;
+    }
+    
+    /* Mantener estilos del formulario */
+    .contact-container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+  </style>
 </head>
 
 <body class="contact-page">
 
-  <!-- NAVBAR reutilizado -->
-  <div id="nav"></div>
+  <!-- HEADER reutilizado -->
+  <div id="header"></div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="contact-container">
@@ -49,14 +271,181 @@
   <!-- SCRIPT SOLO PARA ESTA PÁGINA -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const links = document.querySelectorAll("nav a");
-
-      links.forEach(link => {
-        if (link.textContent.trim() === "Menu") {
-          link.textContent = "Inicio";
-          link.href = "../../index.html";
+      // Función para modificar el header después de cargar los componentes
+      const modifyHeader = () => {
+        const headerDiv = document.querySelector("#header");
+        if (!headerDiv || !headerDiv.querySelector("header")) {
+          setTimeout(modifyHeader, 50);
+          return;
         }
-      });
+
+        const header = headerDiv.querySelector("header");
+        
+        // Asegurar que el header tenga el ID correcto para los estilos de homepage.css
+        header.id = "main-header";
+        
+        const nav = header.querySelector("nav");
+        if (!nav) {
+          setTimeout(modifyHeader, 50);
+          return;
+        }
+
+        // Agregar botón hamburguesa si no existe
+        let menuToggle = nav.querySelector(".menu-toggle");
+        if (!menuToggle) {
+          menuToggle = document.createElement("button");
+          menuToggle.className = "menu-toggle";
+          menuToggle.id = "menu-toggle";
+          menuToggle.type = "button";
+          menuToggle.setAttribute("aria-label", "Abrir menú");
+          menuToggle.innerHTML = '<span></span><span></span><span></span>';
+          nav.insertBefore(menuToggle, nav.firstChild);
+        }
+
+        const navList = nav.querySelector("ul");
+        
+        // Reemplazar todas las opciones del nav solo con "Inicio" que apunta al index.html principal (fuera de public)
+        if (navList) {
+          navList.id = "nav-menu";
+          navList.innerHTML = '<li><a href="../../../index.html">Inicio</a></li>';
+        }
+
+        // Los botones Sign in y Register ya están en el componente dentro de nav > div
+        // Asegurar que el div de botones tenga la clase correcta "header-buttons" para los estilos
+        const buttonsDiv = nav.querySelector("div");
+        if (buttonsDiv) {
+          buttonsDiv.classList.add("header-buttons");
+          // Asegurar que los botones tengan el tipo correcto
+          const buttons = buttonsDiv.querySelectorAll("button");
+          buttons.forEach(btn => {
+            if (!btn.getAttribute("type")) {
+              btn.setAttribute("type", "button");
+            }
+          });
+        }
+
+        // Agregar overlay para el menú móvil si no existe
+        let menuOverlay = header.querySelector(".menu-overlay");
+        if (!menuOverlay) {
+          menuOverlay = document.createElement("div");
+          menuOverlay.className = "menu-overlay";
+          menuOverlay.id = "menu-overlay";
+          header.appendChild(menuOverlay);
+        }
+      };
+
+      // Función para inicializar el menú móvil (igual que homepage.js)
+      const initMobileMenu = () => {
+        const menuToggle = document.getElementById("menu-toggle");
+        const navMenu = document.getElementById("nav-menu");
+        const menuOverlay = document.getElementById("menu-overlay");
+        const headerButtons = document.querySelector(".header-buttons");
+
+        if (!menuToggle || !navMenu || !menuOverlay) return;
+
+        // Verificar si ya tiene event listeners para evitar duplicados
+        if (menuToggle.dataset.initialized === "true") return;
+
+        function openMenu() {
+          menuToggle.classList.add("active");
+          navMenu.classList.add("active");
+          menuOverlay.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+
+        function closeMenu() {
+          menuToggle.classList.remove("active");
+          navMenu.classList.remove("active");
+          menuOverlay.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+
+        // Abrir/cerrar menú al hacer clic en el botón hamburguesa
+        menuToggle.addEventListener("click", function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          if (navMenu.classList.contains("active")) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+
+        // Cerrar menú al hacer clic en el overlay
+        menuOverlay.addEventListener("click", closeMenu);
+
+        // Cerrar menú al hacer clic en un enlace
+        const navLinks = navMenu.querySelectorAll("a");
+        navLinks.forEach(link => {
+          link.addEventListener("click", function() {
+            if (window.innerWidth <= 768) {
+              closeMenu();
+            }
+          });
+        });
+
+        // Cerrar menú al hacer clic en los botones
+        if (headerButtons) {
+          const buttons = headerButtons.querySelectorAll("button");
+          buttons.forEach(button => {
+            button.addEventListener("click", function() {
+              if (window.innerWidth <= 768) {
+                closeMenu();
+              }
+            });
+          });
+        }
+
+        // Cerrar menú al redimensionar la ventana (si cambia a desktop)
+        window.addEventListener("resize", function() {
+          if (window.innerWidth > 768) {
+            closeMenu();
+          }
+        });
+
+        // Marcar como inicializado
+        menuToggle.dataset.initialized = "true";
+      };
+
+      // Intentar modificar después de que los componentes se carguen
+      // Usar múltiples intentos para asegurar que se ejecute después de components.js
+      const tryModify = () => {
+        modifyHeader();
+        
+        // Verificar que todos los elementos estén presentes
+        const header = document.getElementById("main-header");
+        const menuToggle = document.getElementById("menu-toggle");
+        const navMenu = document.getElementById("nav-menu");
+        const menuOverlay = document.getElementById("menu-overlay");
+        
+        if (header && menuToggle && navMenu && menuOverlay) {
+          // Todos los elementos están presentes
+          // Asegurar que el header tenga fondo negro desde el inicio (no hay hero section)
+          header.classList.add("scrolled");
+          
+          // Inicializar el menú móvil solo una vez
+          initMobileMenu();
+          
+          return true;
+        }
+        return false;
+      };
+
+      // Intentar múltiples veces hasta que todos los elementos estén listos
+      let attempts = 0;
+      const maxAttempts = 20;
+      const interval = setInterval(() => {
+        attempts++;
+        if (tryModify() || attempts >= maxAttempts) {
+          clearInterval(interval);
+        }
+      }, 100);
+      
+      // También intentar inmediatamente y después de delays específicos
+      setTimeout(tryModify, 100);
+      setTimeout(tryModify, 300);
+      setTimeout(tryModify, 500);
+      setTimeout(tryModify, 800);
     });
   </script>
 

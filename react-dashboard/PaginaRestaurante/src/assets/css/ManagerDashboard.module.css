@@ -1,0 +1,469 @@
+.dashboard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.greeting {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Sección superior: Perfil e Información Adicional */
+.topSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Tarjeta de perfil con header marrón */
+.profileCard {
+  background-color: var(--color-background);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.profileHeader {
+  background-color: var(--color-primary);
+  padding: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.profileAvatarContainer {
+  flex-shrink: 0;
+}
+
+.profileAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.profileAvatar svg {
+  width: 40px;
+  height: 40px;
+  color: var(--color-background);
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.profileName {
+  color: var(--color-background);
+  font-size: var(--font-size-xl);
+  margin: 0 0 var(--spacing-xs) 0;
+  font-weight: 600;
+}
+
+.profileRole {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-base);
+  margin: 0;
+}
+
+/* Información adicional */
+.additionalInfoCard {
+  background-color: var(--color-background);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.additionalInfoTitle {
+  font-size: var(--font-size-large);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 600;
+}
+
+.additionalInfoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.additionalInfoItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.additionalInfoItem:last-child {
+  border-bottom: none;
+}
+
+.additionalInfoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.additionalInfoIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.additionalInfoContent {
+  flex: 1;
+}
+
+.additionalInfoLabel {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-base);
+}
+
+.additionalInfoDescription {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+}
+
+/* Grid de contacto 2x2 */
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.contactCard {
+  background-color: var(--color-background);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-md);
+}
+
+.contactIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.contactIcon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.contactLabel {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.contactValue {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Sección inferior: Actividad y Pedidos */
+.bottomSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.activitySection,
+.ordersSection {
+  background-color: var(--color-background);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-large);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 600;
+}
+
+/* Gráfico de actividad */
+.activityChart {
+  margin-bottom: var(--spacing-lg);
+}
+
+.chartBars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 150px;
+  gap: var(--spacing-sm);
+}
+
+.chartBar {
+  flex: 1;
+  background: linear-gradient(to top, var(--color-primary), #A0522D);
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+  min-height: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.chartBar:hover {
+  opacity: 0.8;
+}
+
+.activityMetrics {
+  display: flex;
+  justify-content: space-around;
+  gap: var(--spacing-lg);
+}
+
+.activityMetric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.activityMetricLabel {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+}
+
+.activityMetricValue {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-large);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.trendUp {
+  color: var(--color-success);
+  font-size: var(--font-size-base);
+}
+
+/* Gestión de pedidos */
+.ordersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.filtersButton {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-small);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: var(--transition);
+}
+
+.filtersButton:hover {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border-color: var(--color-primary);
+}
+
+.filtersButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ordersSubtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+}
+
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: var(--spacing-sm);
+}
+
+.ordersList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ordersList::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+  border-radius: var(--border-radius-sm);
+}
+
+.ordersList::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: var(--border-radius-sm);
+}
+
+.orderItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  transition: var(--transition);
+}
+
+.orderItem:last-child {
+  border-bottom: none;
+}
+
+.orderItem:hover {
+  background-color: rgba(139, 69, 19, 0.05);
+  border-radius: var(--border-radius-sm);
+}
+
+.orderAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.orderAvatar svg {
+  width: 20px;
+  height: 20px;
+}
+
+.orderInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.orderNumber {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.orderClient {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+}
+
+.orderAmount {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.orderAmountNegative {
+  color: var(--color-error);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .topSection,
+  .bottomSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .activityMetrics {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .profileHeader {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profileAvatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profileAvatar svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .contactIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .contactIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .additionalInfoIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .additionalInfoIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .chartBars {
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    gap: var(--spacing-md);
+  }
+
+  .profileHeader,
+  .additionalInfoCard,
+  .contactCard,
+  .activitySection,
+  .ordersSection {
+    padding: var(--spacing-md);
+  }
+
+  .greeting {
+    font-size: var(--font-size-large);
+  }
+}
