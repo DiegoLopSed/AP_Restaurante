@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de empleados</title>
+
+  <!-- CSS general -->
+  <link rel="stylesheet" href="../../css/styles.css" />
+</head>
+
+<body class="register-page">
+
+  <!-- NAVBAR reutilizado -->
+  <div id="nav"></div>
+
+  <!-- CONTENIDO -->
+  <main class="register-container">
+    <h2 class="register-title">Registro de empleados</h2>
+
+    <form id="registroForm">
+
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ingresa tu nombre">
+      </div>
+
+      <div class="form-group">
+        <label>Apellidos</label>
+        <input type="text" placeholder="Ingresa tus apellidos">
+      </div>
+
+      <div class="form-group">
+        <label>RFC</label>
+        <input type="text" placeholder="Ej. ABCD010101XXX">
+      </div>
+
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label>CURP</label>
+        <input type="text" placeholder="Ej. ABCD010101HDFXXX09">
+      </div>
+
+      <div class="form-group">
+        <label>Número de teléfono</label>
+        <input type="tel" placeholder="10 dígitos">
+      </div>
+
+      <button type="submit" class="btn-black">
+        Registrarse
+      </button>
+    </form>
+  </main>
+
+  <!-- FOOTER reutilizado -->
+  <div id="footer"></div>
+
+  <!-- JS -->
+  <script src="../../js/components.js"></script>
+
+  <script>
+    document.getElementById("registroForm").addEventListener("submit", e => {
+      e.preventDefault();
+      alert("Formulario de registro enviado (solo frontend)");
+    });
+  </script>
+
+</body>
+</html>
