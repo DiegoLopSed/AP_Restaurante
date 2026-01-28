@@ -35,7 +35,7 @@ async function cargarEmpleados() {
             mostrarMensaje('Error al cargar empleados. Ver consola para detalles.', 'error');
             const tbody = document.getElementById('empleadosBody');
             if (tbody) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
             }
             return;
         }
@@ -47,7 +47,7 @@ async function cargarEmpleados() {
             mostrarMensaje('Error al cargar empleados: ' + (data?.message || 'Error desconocido'), 'error');
             const tbody = document.getElementById('empleadosBody');
             if (tbody) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
             }
         }
     } catch (error) {
@@ -72,23 +72,21 @@ function mostrarEmpleados(empleadosFiltrados) {
     }
     
     if (empleadosFiltrados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No hay empleados registrados</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No hay colaboradores registrados</td></tr>';
         return;
     }
     
     tbody.innerHTML = empleadosFiltrados.map(empleado => `
         <tr>
-            <td>${empleado.id_empleado}</td>
+            <td>${empleado.id_colaborador || empleado.id_empleado || 'N/A'}</td>
             <td>${escapeHtml(empleado.nombre || 'N/A')}</td>
             <td>${escapeHtml(empleado.apellido || 'N/A')}</td>
-            <td>${escapeHtml(empleado.cargo || 'N/A')}</td>
+            <td>${escapeHtml(empleado.posicion || empleado.cargo || 'N/A')}</td>
             <td>${escapeHtml(empleado.telefono || 'N/A')}</td>
-            <td>${escapeHtml(empleado.email || 'N/A')}</td>
-            <td>${empleado.fecha_contratacion || 'N/A'}</td>
-            <td>$${parseFloat(empleado.salario || 0).toFixed(2)}</td>
+            <td>${escapeHtml(empleado.correo || empleado.email || 'N/A')}</td>
             <td class="actions-cell">
-                <button class="btn btn-sm" onclick="editarEmpleado(${empleado.id_empleado})">Editar</button>
-                <button class="btn btn-sm btn-danger" onclick="eliminarEmpleado(${empleado.id_empleado})">Eliminar</button>
+                <button class="btn btn-sm" onclick="editarEmpleado(${empleado.id_colaborador || empleado.id_empleado})">Editar</button>
+                <button class="btn btn-sm btn-danger" onclick="eliminarEmpleado(${empleado.id_colaborador || empleado.id_empleado})">Eliminar</button>
             </td>
         </tr>
     `).join('');
@@ -174,9 +172,9 @@ async function editarEmpleado(id) {
             
             if (nombreInput) nombreInput.value = empleado.nombre || '';
             if (apellidoInput) apellidoInput.value = empleado.apellido || '';
-            if (cargoInput) cargoInput.value = empleado.cargo || '';
+            if (cargoInput) cargoInput.value = empleado.posicion || empleado.cargo || '';
             if (telefonoInput) telefonoInput.value = empleado.telefono || '';
-            if (emailInput) emailInput.value = empleado.email || '';
+            if (emailInput) emailInput.value = empleado.correo || empleado.email || '';
             if (fechaInput) fechaInput.value = empleado.fecha_contratacion || '';
             if (salarioInput) salarioInput.value = empleado.salario || '';
             
@@ -214,7 +212,7 @@ async function editarEmpleado(id) {
                     idInput.name = 'id_empleado';
                     form.insertBefore(idInput, form.firstChild);
                 }
-                idInput.value = empleado.id_empleado;
+                idInput.value = empleado.id_colaborador || empleado.id_empleado;
             }
             
             // Mostrar formulario
@@ -308,9 +306,9 @@ async function guardarEmpleado(e) {
         }
     }
     
-    // Validar datos básicos
+    // Validar datos básicos (fechaContratacion y salario ya no son requeridos)
     if (!formData.nombre || !formData.apellido || !formData.cargo || 
-        !formData.telefono || !formData.email || !formData.fechaContratacion) {
+        !formData.telefono || !formData.email) {
         mostrarMensaje('Todos los campos son requeridos', 'error');
         return;
     }
