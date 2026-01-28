@@ -7,8 +7,14 @@
 namespace App\Controllers;
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../Models/Categoria.php';
 
 class CategoriaController {
+    private $model;
+
+    public function __construct() {
+        $this->model = new \App\Models\Categoria();
+    }
 
     /**
      * Manejar todas las peticiones HTTP
@@ -89,15 +95,8 @@ class CategoriaController {
      * Manejar peticiones GET
      */
     private function handleGet($id) {
-        $db = getDB();
-
         if ($id) {
-            // Obtener una categoría específica
-            $stmt = $db->prepare(
-                "SELECT * FROM categoria WHERE id_categoria = ?"
-            );
-            $stmt->execute([$id]);
-            $categoria = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $categoria = $this->model->getById((int)$id);
 
             if (!$categoria) {
                 $this->jsonResponse([
@@ -112,11 +111,7 @@ class CategoriaController {
                 'data' => $categoria
             ]);
         } else {
-            // Obtener todas las categorías
-            $stmt = $db->query(
-                "SELECT * FROM categoria ORDER BY nombre ASC"
-            );
-            $categorias = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $categorias = $this->model->getAll();
 
             $this->jsonResponse([
                 'success' => true,
@@ -132,43 +127,8 @@ class CategoriaController {
         if (!$input) {
             throw new \Exception("Datos requeridos");
         }
-
-        // Validar datos de entrada
-        $this->validateCategoriaData($input);
-
-        $db = getDB();
-
-        // Verificar si ya existe una categoría con el mismo nombre (case-insensitive)
-        $nombreNormalizado = trim($input['nombre']);
-        $stmt = $db->prepare(
-            "SELECT id_categoria FROM categoria WHERE LOWER(nombre) = LOWER(?)"
-        );
-        $stmt->execute([$nombreNormalizado]);
-        if ($stmt->fetch()) {
-            throw new \Exception("Ya existe una categoría con ese nombre");
-        }
-
-        // Insertar nueva categoría
-        $stmt = $db->prepare(
-            "INSERT INTO categoria (nombre, descripcion)
-             VALUES (?, ?)"
-        );
-
-        $nombreNormalizado = trim($input['nombre']);
-        $descripcionNormalizada = isset($input['descripcion']) ? trim($input['descripcion']) : null;
-        
-        $stmt->execute([
-            $nombreNormalizado,
-            $descripcionNormalizada
-        ]);
-
-        $idCategoria = $db->lastInsertId();
-
-        $this->jsonResponse([
-            'success' => true,
-            'message' => 'Categoría creada exitosamente',
-            'data' => ['id_categoria' => $idCategoria]
-        ], 201);
+        $result = $this->model->create($input);
+        $this->jsonResponse($result, 201);
     }
 
     /**
@@ -182,51 +142,8 @@ class CategoriaController {
         if (!$input) {
             throw new \Exception("Datos requeridos");
         }
-
-        // Validar datos de entrada
-        $this->validateCategoriaData($input);
-
-        $db = getDB();
-
-        // Verificar que la categoría existe
-        $stmt = $db->prepare(
-            "SELECT id_categoria FROM categoria WHERE id_categoria = ?"
-        );
-        $stmt->execute([$id]);
-        if (!$stmt->fetch()) {
-            throw new \Exception("Categoría no encontrada");
-        }
-
-        // Verificar si ya existe otra categoría con el mismo nombre (case-insensitive)
-        $nombreNormalizado = trim($input['nombre']);
-        $stmt = $db->prepare(
-            "SELECT id_categoria FROM categoria WHERE LOWER(nombre) = LOWER(?) AND id_categoria != ?"
-        );
-        $stmt->execute([$nombreNormalizado, $id]);
-        if ($stmt->fetch()) {
-            throw new \Exception("Ya existe otra categoría con ese nombre");
-        }
-
-        // Actualizar categoría
-        $stmt = $db->prepare(
-            "UPDATE categoria
-             SET nombre = ?, descripcion = ?
-             WHERE id_categoria = ?"
-        );
-
-        $nombreNormalizado = trim($input['nombre']);
-        $descripcionNormalizada = isset($input['descripcion']) ? trim($input['descripcion']) : null;
-        
-        $stmt->execute([
-            $nombreNormalizado,
-            $descripcionNormalizada,
-            $id
-        ]);
-
-        $this->jsonResponse([
-            'success' => true,
-            'message' => 'Categoría actualizada exitosamente'
-        ]);
+        $result = $this->model->update((int)$id, $input);
+        $this->jsonResponse($result);
     }
 
     /**
@@ -236,78 +153,8 @@ class CategoriaController {
         if (!$id) {
             throw new \Exception("ID requerido");
         }
-
-        $db = getDB();
-
-        // Verificar que la categoría existe
-        $stmt = $db->prepare(
-            "SELECT id_categoria FROM categoria WHERE id_categoria = ?"
-        );
-        $stmt->execute([$id]);
-        if (!$stmt->fetch()) {
-            throw new \Exception("Categoría no encontrada");
-        }
-
-        // Verificar si hay insumos o productos asociados
-        $stmt = $db->prepare(
-            "SELECT COUNT(*) as count FROM insumo WHERE id_categoria = ?"
-        );
-        $stmt->execute([$id]);
-        $insumos = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        $stmt = $db->prepare(
-            "SELECT COUNT(*) as count FROM productos WHERE id_categoria = ?"
-        );
-        $stmt->execute([$id]);
-        $productos = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if ($insumos['count'] > 0 || $productos['count'] > 0) {
-            throw new \Exception(
-                "No se puede eliminar la categoría porque tiene " .
-                ($insumos['count'] > 0 ? "{$insumos['count']} insumo(s)" : "") .
-                ($insumos['count'] > 0 && $productos['count'] > 0 ? " y " : "") .
-                ($productos['count'] > 0 ? "{$productos['count']} producto(s)" : "") .
-                " asociado(s)"
-            );
-        }
-
-        // Eliminar categoría
-        $stmt = $db->prepare(
-            "DELETE FROM categoria WHERE id_categoria = ?"
-        );
-
-        $stmt->execute([$id]);
-
-        $this->jsonResponse([
-            'success' => true,
-            'message' => 'Categoría eliminada exitosamente'
-        ]);
-    }
-
-    /**
-     * Validar datos de categoría
-     */
-    private function validateCategoriaData($input) {
-        if (empty($input['nombre']) || !is_string($input['nombre'])) {
-            throw new \Exception("El nombre es requerido y debe ser una cadena de texto");
-        }
-
-        $nombre = trim($input['nombre']);
-        if (strlen($nombre) < 2) {
-            throw new \Exception("El nombre debe tener al menos 2 caracteres");
-        }
-
-        if (strlen($nombre) > 255) {
-            throw new \Exception("El nombre no puede exceder 255 caracteres");
-        }
-
-        if (isset($input['descripcion']) && !is_string($input['descripcion'])) {
-            throw new \Exception("La descripción debe ser una cadena de texto");
-        }
-
-        if (isset($input['descripcion']) && strlen($input['descripcion']) > 1000) {
-            throw new \Exception("La descripción no puede exceder 1000 caracteres");
-        }
+        $result = $this->model->delete((int)$id);
+        $this->jsonResponse($result);
     }
 
     /**
