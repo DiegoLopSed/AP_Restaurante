@@ -1,15 +1,12 @@
 <?php
 /**
- * Controlador de Registro de Usuarios
- * Maneja las peticiones HTTP para el registro de usuarios
+ * Controlador de Registro de Colaboradores
+ * Maneja las peticiones HTTP para el registro de colaboradores
  */
 
 namespace App\Controllers;
 
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../Utils/EncryptionHelper.php';
-
-use App\Utils\EncryptionHelper;
 
 class RegistroController {
 
@@ -90,10 +87,11 @@ class RegistroController {
         $correo = trim($input['correo'] ?? '');
         $telefono = trim($input['telefono'] ?? '');
         $contrasena = $input['contrasena'] ?? '';
+        $posicion = trim($input['posicion'] ?? '');
 
         // Validar campos requeridos
         if (empty($nombre) || empty($apellido) || empty($rfc) || empty($curp) || 
-            empty($correo) || empty($telefono) || empty($contrasena)) {
+            empty($correo) || empty($telefono) || empty($contrasena) || empty($posicion)) {
             throw new \Exception("Todos los campos son requeridos");
         }
 
@@ -131,48 +129,49 @@ class RegistroController {
         $db = getDB();
 
         // Verificar si el correo ya existe
-        $stmt = $db->prepare("SELECT id_registro FROM registro WHERE correo = ?");
+        $stmt = $db->prepare("SELECT id_colaborador FROM colaboradores WHERE correo = ?");
         $stmt->execute([$correo]);
         if ($stmt->fetch()) {
             throw new \Exception("El correo electrónico ya está registrado");
         }
 
-        // Verificar si el RFC ya existe (usando cifrado)
-        if (EncryptionHelper::searchByRfc($db, $rfc)) {
+        // Verificar si el RFC ya existe
+        $stmt = $db->prepare("SELECT id_colaborador FROM colaboradores WHERE rfc = ?");
+        $stmt->execute([strtoupper($rfc)]);
+        if ($stmt->fetch()) {
             throw new \Exception("El RFC ya está registrado");
         }
 
-        // Verificar si el CURP ya existe (usando cifrado)
-        if (EncryptionHelper::searchByCurp($db, $curp)) {
+        // Verificar si el CURP ya existe
+        $stmt = $db->prepare("SELECT id_colaborador FROM colaboradores WHERE curp = ?");
+        $stmt->execute([strtoupper($curp)]);
+        if ($stmt->fetch()) {
             throw new \Exception("El CURP ya está registrado");
         }
-
-        // Cifrar RFC y CURP antes de guardar
-        $rfcCifrado = EncryptionHelper::encryptRfc($rfc);
-        $curpCifrado = EncryptionHelper::encryptCurp($curp);
         
-        // Insertar nuevo registro
+        // Insertar nuevo registro (solo la contraseña tiene hash, RFC y CURP se guardan directamente)
         $stmt = $db->prepare(
-            "INSERT INTO registro (nombre, apellido, rfc, curp, correo, telefono, contrasena)
-             VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO colaboradores (nombre, apellido, rfc, curp, correo, telefono, pass, posicion)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         $stmt->execute([
             $nombre,
             $apellido,
-            $rfcCifrado,
-            $curpCifrado,
+            strtoupper($rfc),
+            strtoupper($curp),
             strtolower($correo),
             $telefono,
-            $passwordHash
+            $passwordHash,
+            $posicion
         ]);
 
-        $idRegistro = $db->lastInsertId();
+        $idColaborador = $db->lastInsertId();
 
         $this->jsonResponse([
             'success' => true,
-            'message' => 'Usuario registrado exitosamente',
-            'data' => ['id_registro' => $idRegistro]
+            'message' => 'Colaborador registrado exitosamente',
+            'data' => ['id_colaborador' => $idColaborador]
         ], 201);
     }
 
