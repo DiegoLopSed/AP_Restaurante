@@ -29,19 +29,19 @@
 
     <main class="container">
         <section class="welcome">
-            <h2>Gestión de Empleados</h2>
-            <p>Administre la información de los empleados del restaurante</p>
+            <h2>Gestión de Colaboradores</h2>
+            <p>Administre la información de los colaboradores del restaurante</p>
         </section>
 
         <section class="table-container mt-2">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3>Lista de Empleados</h3>
-                <button class="btn" onclick="mostrarFormulario()">Agregar Empleado</button>
+                <h3>Lista de Colaboradores</h3>
+                <button class="btn" onclick="mostrarFormulario()">Agregar Colaborador</button>
             </div>
 
             <!-- Formulario de Empleado (oculto por defecto) -->
             <div id="formEmpleado" style="display: none; background-color: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-                <h3 id="formTitulo">Agregar Nuevo Empleado</h3>
+                <h3 id="formTitulo">Agregar Nuevo Colaborador</h3>
                 <form id="empleadoForm">
                     <div class="form-group">
                         <label for="nombre">Nombre:</label>
@@ -70,13 +70,18 @@
                         <label for="email">Email:</label>
                         <input type="email" id="email" name="email" required>
                     </div>
+                    <!-- Campos opcionales para crear usuario asociado -->
                     <div class="form-group">
-                        <label for="fechaContratacion">Fecha de Contratación:</label>
-                        <input type="date" id="fechaContratacion" name="fechaContratacion" required>
+                        <label for="rfc">RFC (Opcional - Solo si crea usuario):</label>
+                        <input type="text" id="rfc" name="rfc" placeholder="XAXX010101XXX" maxlength="13" style="text-transform: uppercase;">
                     </div>
                     <div class="form-group">
-                        <label for="salario">Salario:</label>
-                        <input type="number" id="salario" name="salario" step="0.01" required>
+                        <label for="curp">CURP (Opcional - Solo si crea usuario):</label>
+                        <input type="text" id="curp" name="curp" placeholder="XAXX010101HDFXXX01" maxlength="18" style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label for="contrasena">Contraseña (Opcional - Solo si crea usuario):</label>
+                        <input type="password" id="contrasena" name="contrasena" placeholder="Mínimo 8 caracteres" minlength="8">
                     </div>
                     <div class="actions">
                         <button type="submit" class="btn btn-success">Guardar</button>
@@ -92,11 +97,9 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
-                        <th>Cargo</th>
+                        <th>Posición</th>
                         <th>Teléfono</th>
                         <th>Email</th>
-                        <th>Fecha Contratación</th>
-                        <th>Salario</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
