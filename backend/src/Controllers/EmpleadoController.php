@@ -1,15 +1,13 @@
 <?php
 /**
- * Controlador de Empleados
- * Maneja las peticiones HTTP para la gestión de empleados
+ * Controlador de Colaboradores (Empleados)
+ * Maneja las peticiones HTTP para la gestión de colaboradores
+ * Utiliza la tabla 'colaboradores' en lugar de 'empleado'
  */
 
 namespace App\Controllers;
 
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../Utils/EncryptionHelper.php';
-
-use App\Utils\EncryptionHelper;
 
 class EmpleadoController {
 
@@ -95,41 +93,39 @@ class EmpleadoController {
         $db = getDB();
 
         if ($id) {
-            // Obtener un empleado específico
+            // Obtener un colaborador específico
             $stmt = $db->prepare(
-                "SELECT e.*, r.correo as registro_correo 
-                 FROM empleado e 
-                 LEFT JOIN registro r ON e.id_registro = r.id_registro 
-                 WHERE e.id_empleado = ?"
+                "SELECT id_colaborador, nombre, apellido, correo, telefono, posicion, created_at, updated_at
+                 FROM colaboradores 
+                 WHERE id_colaborador = ?"
             );
             $stmt->execute([$id]);
-            $empleado = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $colaborador = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            if (!$empleado) {
+            if (!$colaborador) {
                 $this->jsonResponse([
                     'success' => false,
-                    'message' => 'Empleado no encontrado'
+                    'message' => 'Colaborador no encontrado'
                 ], 404);
                 return;
             }
 
             $this->jsonResponse([
                 'success' => true,
-                'data' => $empleado
+                'data' => $colaborador
             ]);
         } else {
-            // Obtener todos los empleados
+            // Obtener todos los colaboradores
             $stmt = $db->query(
-                "SELECT e.*, r.correo as registro_correo 
-                 FROM empleado e 
-                 LEFT JOIN registro r ON e.id_registro = r.id_registro 
-                 ORDER BY e.nombre ASC, e.apellido ASC"
+                "SELECT id_colaborador, nombre, apellido, correo, telefono, posicion, created_at, updated_at
+                 FROM colaboradores 
+                 ORDER BY nombre ASC, apellido ASC"
             );
-            $empleados = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $colaboradores = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $this->jsonResponse([
                 'success' => true,
-                'data' => $empleados
+                'data' => $colaboradores
             ]);
         }
     }
@@ -147,13 +143,29 @@ class EmpleadoController {
 
         $db = getDB();
         
-        // Iniciar transacción para crear registro y empleado
+        // Iniciar transacción
         $db->beginTransaction();
         
         try {
-            $idRegistro = null;
+            // Validar y obtener datos
+            $nombre = trim($input['nombre'] ?? '');
+            $apellido = trim($input['apellido'] ?? '');
+            $correo = strtolower(trim($input['email'] ?? ''));
+            $telefono = trim($input['telefono'] ?? '');
+            $posicion = trim($input['cargo'] ?? $input['posicion'] ?? '');
             
-            // Si se proporcionan RFC, CURP y contraseña, crear registro
+            // Verificar si el correo ya existe
+            $stmt = $db->prepare("SELECT id_colaborador FROM colaboradores WHERE correo = ?");
+            $stmt->execute([$correo]);
+            if ($stmt->fetch()) {
+                throw new \Exception("El correo electrónico ya está registrado");
+            }
+            
+            $rfc = null;
+            $curp = null;
+            $passwordHash = null;
+            
+            // Si se proporcionan RFC, CURP y contraseña, procesarlos
             if (!empty($input['rfc']) && !empty($input['curp']) && !empty($input['contrasena'])) {
                 // Validar RFC
                 $rfc = strtoupper(trim($input['rfc']));
@@ -172,94 +184,54 @@ class EmpleadoController {
                     throw new \Exception("La contraseña debe tener al menos 8 caracteres");
                 }
                 
-                // Verificar si el correo ya existe en registros
-                $stmt = $db->prepare("SELECT id_registro FROM registro WHERE correo = ?");
-                $stmt->execute([strtolower(trim($input['email']))]);
+                // Verificar si el RFC ya existe
+                $stmt = $db->prepare("SELECT id_colaborador FROM colaboradores WHERE rfc = ?");
+                $stmt->execute([$rfc]);
                 if ($stmt->fetch()) {
-                    throw new \Exception("El correo electrónico ya está registrado");
-                }
-                
-                // Verificar si el RFC ya existe (usando cifrado)
-                if (EncryptionHelper::searchByRfc($db, $rfc)) {
                     throw new \Exception("El RFC ya está registrado");
                 }
                 
-                // Verificar si el CURP ya existe (usando cifrado)
-                if (EncryptionHelper::searchByCurp($db, $curp)) {
+                // Verificar si el CURP ya existe
+                $stmt = $db->prepare("SELECT id_colaborador FROM colaboradores WHERE curp = ?");
+                $stmt->execute([$curp]);
+                if ($stmt->fetch()) {
                     throw new \Exception("El CURP ya está registrado");
                 }
                 
-                // Hash de la contraseña
+                // Hash de la contraseña (solo la contraseña tiene hash)
                 $passwordHash = password_hash($input['contrasena'], PASSWORD_DEFAULT);
                 if ($passwordHash === false) {
                     throw new \Exception("Error al procesar la contraseña");
                 }
-                
-                // Cifrar RFC y CURP antes de guardar
-                $rfcCifrado = EncryptionHelper::encryptRfc($rfc);
-                $curpCifrado = EncryptionHelper::encryptCurp($curp);
-                
-                // Crear registro
-                $stmt = $db->prepare(
-                    "INSERT INTO registro (nombre, apellido, rfc, curp, correo, telefono, contrasena)
-                     VALUES (?, ?, ?, ?, ?, ?, ?)"
-                );
-                
-                $stmt->execute([
-                    trim($input['nombre']),
-                    trim($input['apellido']),
-                    $rfcCifrado,
-                    $curpCifrado,
-                    strtolower(trim($input['email'])),
-                    trim($input['telefono']),
-                    $passwordHash
-                ]);
-                
-                $idRegistro = $db->lastInsertId();
             }
-
-            // Verificar si ya existe un empleado con el mismo email
+            
+            // Crear colaborador (solo la contraseña tiene hash, RFC y CURP se guardan directamente)
             $stmt = $db->prepare(
-                "SELECT id_empleado FROM empleado WHERE email = ?"
-            );
-            $stmt->execute([strtolower(trim($input['email']))]);
-            if ($stmt->fetch()) {
-                throw new \Exception("Ya existe un empleado con ese email");
-            }
-
-            // Insertar nuevo empleado
-            $stmt = $db->prepare(
-                "INSERT INTO empleado (nombre, apellido, cargo, telefono, email, fecha_contratacion, salario, id_registro)
+                "INSERT INTO colaboradores (nombre, apellido, rfc, curp, correo, telefono, pass, posicion)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             );
-
+            
             $stmt->execute([
-                trim($input['nombre']),
-                trim($input['apellido']),
-                $input['cargo'],
-                trim($input['telefono']),
-                strtolower(trim($input['email'])),
-                $input['fechaContratacion'],
-                $input['salario'],
-                $idRegistro
+                $nombre,
+                $apellido,
+                $rfc,
+                $curp,
+                $correo,
+                $telefono,
+                $passwordHash,
+                $posicion
             ]);
-
-            $idEmpleado = $db->lastInsertId();
+            
+            $idColaborador = $db->lastInsertId();
             
             // Confirmar transacción
             $db->commit();
 
-            $mensaje = 'Empleado creado exitosamente';
-            if ($idRegistro) {
-                $mensaje .= ' y registro asociado creado';
-            }
-
             $this->jsonResponse([
                 'success' => true,
-                'message' => $mensaje,
+                'message' => 'Colaborador creado exitosamente',
                 'data' => [
-                    'id_empleado' => $idEmpleado,
-                    'id_registro' => $idRegistro
+                    'id_colaborador' => $idColaborador
                 ]
             ], 201);
             
@@ -287,47 +259,46 @@ class EmpleadoController {
 
         $db = getDB();
 
-        // Verificar que el empleado existe
+        // Verificar que el colaborador existe
         $stmt = $db->prepare(
-            "SELECT id_empleado FROM empleado WHERE id_empleado = ?"
+            "SELECT id_colaborador FROM colaboradores WHERE id_colaborador = ?"
         );
         $stmt->execute([$id]);
         if (!$stmt->fetch()) {
-            throw new \Exception("Empleado no encontrado");
+            throw new \Exception("Colaborador no encontrado");
         }
 
-        // Verificar si ya existe otro empleado con el mismo email
+        // Verificar si ya existe otro colaborador con el mismo email
         $stmt = $db->prepare(
-            "SELECT id_empleado FROM empleado WHERE email = ? AND id_empleado != ?"
+            "SELECT id_colaborador FROM colaboradores WHERE correo = ? AND id_colaborador != ?"
         );
         $stmt->execute([strtolower(trim($input['email'])), $id]);
         if ($stmt->fetch()) {
-            throw new \Exception("Ya existe otro empleado con ese email");
+            throw new \Exception("Ya existe otro colaborador con ese email");
         }
 
-        // Actualizar empleado
+        // Obtener posición (puede venir como 'cargo' o 'posicion')
+        $posicion = trim($input['cargo'] ?? $input['posicion'] ?? '');
+
+        // Actualizar colaborador
         $stmt = $db->prepare(
-            "UPDATE empleado
-             SET nombre = ?, apellido = ?, cargo = ?, telefono = ?, email = ?, 
-                 fecha_contratacion = ?, salario = ?, id_registro = ?
-             WHERE id_empleado = ?"
+            "UPDATE colaboradores
+             SET nombre = ?, apellido = ?, telefono = ?, correo = ?, posicion = ?
+             WHERE id_colaborador = ?"
         );
 
         $stmt->execute([
             trim($input['nombre']),
             trim($input['apellido']),
-            $input['cargo'],
             trim($input['telefono']),
             strtolower(trim($input['email'])),
-            $input['fechaContratacion'],
-            $input['salario'],
-            isset($input['id_registro']) ? $input['id_registro'] : null,
+            $posicion,
             $id
         ]);
 
         $this->jsonResponse([
             'success' => true,
-            'message' => 'Empleado actualizado exitosamente'
+            'message' => 'Colaborador actualizado exitosamente'
         ]);
     }
 
@@ -341,30 +312,30 @@ class EmpleadoController {
 
         $db = getDB();
 
-        // Verificar que el empleado existe
+        // Verificar que el colaborador existe
         $stmt = $db->prepare(
-            "SELECT id_empleado FROM empleado WHERE id_empleado = ?"
+            "SELECT id_colaborador FROM colaboradores WHERE id_colaborador = ?"
         );
         $stmt->execute([$id]);
         if (!$stmt->fetch()) {
-            throw new \Exception("Empleado no encontrado");
+            throw new \Exception("Colaborador no encontrado");
         }
 
-        // Eliminar empleado
+        // Eliminar colaborador
         $stmt = $db->prepare(
-            "DELETE FROM empleado WHERE id_empleado = ?"
+            "DELETE FROM colaboradores WHERE id_colaborador = ?"
         );
 
         $stmt->execute([$id]);
 
         $this->jsonResponse([
             'success' => true,
-            'message' => 'Empleado eliminado exitosamente'
+            'message' => 'Colaborador eliminado exitosamente'
         ]);
     }
 
     /**
-     * Validar datos de empleado
+     * Validar datos de colaborador
      */
     private function validateEmpleadoData($input, $isUpdate = false) {
         if (empty($input['nombre']) || !is_string($input['nombre'])) {
@@ -393,10 +364,14 @@ class EmpleadoController {
             throw new \Exception("El apellido no puede exceder 100 caracteres");
         }
 
-        // Validar cargo
-        $cargosValidos = ['Mesero', 'Cocinero', 'Cajero', 'Gerente', 'Limpieza'];
-        if (empty($input['cargo']) || !in_array($input['cargo'], $cargosValidos)) {
-            throw new \Exception("El cargo es requerido y debe ser uno de: " . implode(', ', $cargosValidos));
+        // Validar posición (puede venir como 'cargo' o 'posicion')
+        $posicion = trim($input['cargo'] ?? $input['posicion'] ?? '');
+        if (empty($posicion)) {
+            throw new \Exception("La posición es requerida");
+        }
+
+        if (strlen($posicion) > 100) {
+            throw new \Exception("La posición no puede exceder 100 caracteres");
         }
 
         // Validar email
@@ -408,16 +383,6 @@ class EmpleadoController {
         if (empty($input['telefono']) || !preg_match('/^[0-9]{10,15}$/', $input['telefono'])) {
             throw new \Exception("El teléfono es requerido y debe tener entre 10 y 15 dígitos");
         }
-
-        // Validar fecha de contratación
-        if (empty($input['fechaContratacion'])) {
-            throw new \Exception("La fecha de contratación es requerida");
-        }
-
-        // Validar salario
-        if (!isset($input['salario']) || !is_numeric($input['salario']) || $input['salario'] < 0) {
-            throw new \Exception("El salario es requerido y debe ser un número positivo");
-        }
         
         // Validar que si se proporciona alguno de RFC, CURP o contraseña, se proporcionen todos
         $tieneRfc = !empty($input['rfc']);
@@ -425,7 +390,7 @@ class EmpleadoController {
         $tieneContrasena = !empty($input['contrasena']);
         
         if (($tieneRfc || $tieneCurp || $tieneContrasena) && !($tieneRfc && $tieneCurp && $tieneContrasena)) {
-            throw new \Exception("Si desea crear un usuario asociado, debe proporcionar RFC, CURP y contraseña");
+            throw new \Exception("Si desea crear un usuario con credenciales, debe proporcionar RFC, CURP y contraseña");
         }
     }
 
