@@ -28,6 +28,12 @@
   flex-shrink: 0;
 }
 
+.iconContainer svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-kpi-green-dark);
+}
+
 .cardTitleContainer {
   flex: 1;
 }
