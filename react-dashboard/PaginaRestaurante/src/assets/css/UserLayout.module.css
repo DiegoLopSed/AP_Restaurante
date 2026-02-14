@@ -158,9 +158,12 @@
     margin-left: 0;
   }
 
-  .logoutButton svg {
-    width: 18px;
-    height: 18px;
+  .logo {
+    display: none;
+  }
+
+  .logoutButton {
+    display: none;
   }
 
   .contentArea {
