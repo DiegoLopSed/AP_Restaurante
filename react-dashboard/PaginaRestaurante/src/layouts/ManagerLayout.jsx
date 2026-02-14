@@ -43,10 +43,8 @@ const ManagerLayout = () => {
   ];
 
   const handleLogout = () => {
-    // Redirigir al index.html fuera de react-dashboard
-    // Usar ruta absoluta desde la raíz del servidor
-    const baseUrl = window.location.origin;
-    window.location.href = `${baseUrl}/index.html`;
+    // Lógica de logout aquí
+    console.log('Cerrar sesión');
   };
 
   return (

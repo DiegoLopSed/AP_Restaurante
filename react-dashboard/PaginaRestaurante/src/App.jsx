@@ -5,6 +5,7 @@ import UserDashboard from "./pages/user/Dashboard";
 import UserProfile from "./pages/user/Profile";
 import ManagerDashboard from "./pages/manager/Dashboard";
 import ManagerEmployees from "./pages/manager/Employees";
+import ClientDashboard from "./pages/clients/Dashboard";
 import './App.css';
 
 function App() {
@@ -16,6 +17,12 @@ function App() {
           <Route index element={<Navigate to="/user/dashboard" replace />} />
           <Route path="dashboard" element={<UserDashboard />} />
           <Route path="profile" element={<UserProfile />} />
+        </Route>
+
+        {/* Rutas de clientes frecuentes */}
+        <Route path="/clients" element={<UserLayout />}>
+          <Route index element={<Navigate to="/clients/dashboard" replace />} />
+          <Route path="dashboard" element={<ClientDashboard />} />
         </Route>
 
         {/* Rutas de gerente */}
