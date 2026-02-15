@@ -19,7 +19,6 @@ async function registroUsuario(event) {
     
     const form = document.getElementById('registroForm');
     if (!form) {
-        console.error('Formulario no encontrado');
         return;
     }
     
@@ -31,16 +30,13 @@ async function registroUsuario(event) {
             body: formData
         });
         
-        // Obtener el texto primero para debug
         const responseText = await response.text();
         
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
-            mostrarMensaje('Error: El servidor devolvió una respuesta inválida. Ver consola para detalles.', 'error');
+            mostrarMensaje('Error: El servidor devolvió una respuesta inválida', 'error');
             return;
         }
         
@@ -56,7 +52,6 @@ async function registroUsuario(event) {
             mostrarMensaje(data.message || 'Error al registrar el usuario', 'error');
         }
     } catch (error) {
-        console.error('Error al registrar usuario:', error);
         mostrarMensaje('Error al registrar el usuario: ' + error.message, 'error');
     }
 }
@@ -100,6 +95,5 @@ function mostrarMensaje(mensaje, tipo) {
         mensajeDiv.remove();
     }, 5000);
 }
-
 
             
