@@ -7,9 +7,6 @@
 namespace App\Controllers;
 
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../Utils/EncryptionHelper.php';
-
-use App\Utils\EncryptionHelper;
 
 class AuthController {
 
@@ -49,7 +46,7 @@ class AuthController {
             // Obtener datos del body (JSON)
             $rawInput = file_get_contents('php://input');
             $input = json_decode($rawInput, true);
-            
+
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception("JSON inválido: " . json_last_error_msg());
             }
@@ -92,17 +89,17 @@ class AuthController {
 
         $db = getDB();
 
-        // Buscar registro por correo
+        // Buscar colaborador por correo
         $stmt = $db->prepare(
-            "SELECT id_registro, nombre, apellido, correo, contrasena, rfc, curp, telefono 
-             FROM registro 
+            "SELECT id_colaborador, nombre, apellido, correo, pass, rfc, curp, telefono, posicion
+             FROM colaboradores
              WHERE correo = ?"
         );
         $stmt->execute([strtolower($correo)]);
-        $registro = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $colaborador = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        // Verificar si el registro existe
-        if (!$registro) {
+        // Verificar si el colaborador existe
+        if (!$colaborador) {
             // No revelar si el correo existe o no por seguridad
             $this->jsonResponse([
                 'success' => false,
@@ -112,7 +109,7 @@ class AuthController {
         }
 
         // Verificar contraseña
-        if (!password_verify($contrasena, $registro['contrasena'])) {
+        if (!password_verify($contrasena, $colaborador['pass'])) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Correo o contraseña incorrectos'
@@ -120,26 +117,25 @@ class AuthController {
             return;
         }
 
-        // Eliminar contraseña de los datos del registro antes de enviarlos
-        unset($registro['contrasena']);
+        // Eliminar contraseña de los datos del colaborador antes de enviarlos
+        unset($colaborador['pass']);
 
         // Generar token simple (en producción, usar JWT o similar)
-        $token = $this->generarToken($registro['id_registro'], $registro['correo']);
+        $token = $this->generarToken($colaborador['id_colaborador'], $colaborador['correo']);
 
-        // Descifrar RFC y CURP antes de enviar (solo para mostrar, no enviar completos por seguridad)
-        $rfcDescifrado = EncryptionHelper::decryptRfc($registro['rfc']);
-        $curpDescifrado = EncryptionHelper::decryptCurp($registro['curp']);
-        
-        // Datos del registro para la respuesta (sin contraseña)
         // Por seguridad, solo mostrar parcialmente RFC y CURP
-        $registroData = [
-            'id_registro' => $registro['id_registro'],
-            'nombre' => $registro['nombre'],
-            'apellido' => $registro['apellido'],
-            'correo' => $registro['correo'],
-            'rfc' => substr($rfcDescifrado, 0, 4) . '****' . substr($rfcDescifrado, -3), // Solo mostrar parcialmente
-            'curp' => substr($curpDescifrado, 0, 4) . '****' . substr($curpDescifrado, -4), // Solo mostrar parcialmente
-            'telefono' => $registro['telefono']
+        $rfc = $colaborador['rfc'] ?? '';
+        $curp = $colaborador['curp'] ?? '';
+
+        $colaboradorData = [
+            'id_colaborador' => $colaborador['id_colaborador'],
+            'nombre' => $colaborador['nombre'],
+            'apellido' => $colaborador['apellido'],
+            'correo' => $colaborador['correo'],
+            'rfc' => $rfc ? (substr($rfc, 0, 4) . '****' . substr($rfc, -3)) : '',
+            'curp' => $curp ? (substr($curp, 0, 4) . '****' . substr($curp, -4)) : '',
+            'telefono' => $colaborador['telefono'],
+            'posicion' => $colaborador['posicion']
         ];
 
         $this->jsonResponse([
@@ -147,7 +143,7 @@ class AuthController {
             'message' => 'Inicio de sesión exitoso',
             'data' => [
                 'token' => $token,
-                'usuario' => $registroData
+                'usuario' => $colaboradorData
             ]
         ], 200);
     }
@@ -156,11 +152,9 @@ class AuthController {
      * Generar token simple para autenticación
      * En producción, usar JWT o similar
      */
-    private function generarToken($idRegistro, $correo) {
-        // Token simple: base64(id_registro:correo:timestamp)
-        // En producción, usar una biblioteca JWT
+    private function generarToken($idColaborador, $correo) {
         $timestamp = time();
-        $tokenData = $idRegistro . ':' . $correo . ':' . $timestamp;
+        $tokenData = $idColaborador . ':' . $correo . ':' . $timestamp;
         return base64_encode($tokenData);
     }
 
@@ -172,4 +166,5 @@ class AuthController {
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 }
+
 
