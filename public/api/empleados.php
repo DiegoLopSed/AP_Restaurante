@@ -34,15 +34,11 @@ try {
     // Limpiar cualquier salida previa (incluyendo errores de PHP)
     ob_clean();
     
-    // Capturar cualquier error y devolverlo como JSON
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'success' => false,
-        'message' => 'Error: ' . $e->getMessage(),
-        'file' => basename($e->getFile()),
-        'line' => $e->getLine(),
-        'trace' => explode("\n", $e->getTraceAsString())
+        'message' => 'Error: ' . $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }
 
