@@ -30,9 +30,7 @@ async function cargarEmpleados() {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON de empleados. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
-            mostrarMensaje('Error al cargar empleados. Ver consola para detalles.', 'error');
+            mostrarMensaje('Error al cargar empleados', 'error');
             const tbody = document.getElementById('empleadosBody');
             if (tbody) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
@@ -51,7 +49,6 @@ async function cargarEmpleados() {
             }
         }
     } catch (error) {
-        console.error('Error al cargar empleados:', error);
         mostrarMensaje('Error al cargar empleados', 'error');
         const tbody = document.getElementById('empleadosBody');
         if (tbody) {
@@ -67,7 +64,6 @@ function mostrarEmpleados(empleadosFiltrados) {
     const tbody = document.getElementById('empleadosBody');
     
     if (!tbody) {
-        console.error('No se encontró el elemento empleadosBody');
         return;
     }
     
@@ -150,7 +146,6 @@ async function editarEmpleado(id) {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta:', responseText);
             mostrarMensaje('Error al cargar el empleado', 'error');
             return;
         }
@@ -236,7 +231,6 @@ async function editarEmpleado(id) {
             mostrarMensaje('Error al cargar el empleado', 'error');
         }
     } catch (error) {
-        console.error('Error al editar empleado:', error);
         mostrarMensaje('Error al cargar el empleado', 'error');
     }
 }
@@ -329,10 +323,8 @@ async function guardarEmpleado(e) {
             let errorData;
             try {
                 errorData = JSON.parse(errorText);
-                console.error('Error del servidor (status ' + response.status + '):', errorData);
                 mostrarMensaje(errorData.message || `Error ${response.status}: ${response.statusText}`, 'error');
             } catch (parseError) {
-                console.error('Error no parseable del servidor:', errorText);
                 mostrarMensaje(`Error ${response.status}: ${response.statusText}`, 'error');
             }
             return;
@@ -344,9 +336,7 @@ async function guardarEmpleado(e) {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
-            mostrarMensaje('Error: El servidor devolvió una respuesta inválida. Ver consola para detalles.', 'error');
+            mostrarMensaje('Error: El servidor devolvió una respuesta inválida', 'error');
             return;
         }
         
@@ -358,8 +348,6 @@ async function guardarEmpleado(e) {
             mostrarMensaje(data.message || 'Error al guardar el empleado', 'error');
         }
     } catch (error) {
-        console.error('Error al guardar empleado:', error);
-        console.error('Error completo:', error.message, error.stack);
         mostrarMensaje('Error al guardar el empleado: ' + error.message, 'error');
     }
 }
@@ -383,7 +371,6 @@ async function eliminarEmpleado(id) {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta:', responseText);
             mostrarMensaje('Error al eliminar el empleado', 'error');
             return;
         }
@@ -395,7 +382,6 @@ async function eliminarEmpleado(id) {
             mostrarMensaje(data.message || 'Error al eliminar el empleado', 'error');
         }
     } catch (error) {
-        console.error('Error al eliminar empleado:', error);
         mostrarMensaje('Error al eliminar el empleado', 'error');
     }
 }
