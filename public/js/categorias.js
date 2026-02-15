@@ -24,17 +24,13 @@ document.addEventListener('DOMContentLoaded', function() {
 async function cargarCategorias() {
     try {
         const response = await fetch(API_URL);
-        
-        // Obtener el texto primero para debug
         const responseText = await response.text();
         
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON de categorías. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
-            mostrarMensaje('Error al cargar categorías. Ver consola para detalles.', 'error');
+            mostrarMensaje('Error al cargar categorías', 'error');
             const tbody = document.getElementById('insumosBody');
             if (tbody) {
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
@@ -53,7 +49,6 @@ async function cargarCategorias() {
             }
         }
     } catch (error) {
-        console.error('Error al cargar categorías:', error);
         mostrarMensaje('Error al cargar categorías', 'error');
         const tbody = document.getElementById('insumosBody');
         if (tbody) {
@@ -69,7 +64,6 @@ function mostrarCategorias(categoriasFiltradas) {
     const tbody = document.getElementById('insumosBody');
     
     if (!tbody) {
-        console.error('No se encontró el elemento insumosBody');
         return;
     }
     
@@ -160,7 +154,6 @@ async function editarCategoria(id) {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta:', responseText);
             mostrarMensaje('Error al cargar la categoría', 'error');
             return;
         }
@@ -236,7 +229,6 @@ async function editarCategoria(id) {
             mostrarMensaje('Error al cargar la categoría', 'error');
         }
     } catch (error) {
-        console.error('Error al editar categoría:', error);
         mostrarMensaje('Error al cargar la categoría', 'error');
     }
 }
@@ -287,25 +279,20 @@ async function guardarCategoria(e) {
             let errorData;
             try {
                 errorData = JSON.parse(errorText);
-                console.error('Error del servidor (status ' + response.status + '):', errorData);
                 mostrarMensaje(errorData.message || `Error ${response.status}: ${response.statusText}`, 'error');
             } catch (parseError) {
-                console.error('Error no parseable del servidor:', errorText);
                 mostrarMensaje(`Error ${response.status}: ${response.statusText}`, 'error');
             }
             return;
         }
         
-        // Obtener el texto primero para debug
         const responseText = await response.text();
         
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
-            mostrarMensaje('Error: El servidor devolvió una respuesta inválida. Ver consola para detalles.', 'error');
+            mostrarMensaje('Error: El servidor devolvió una respuesta inválida', 'error');
             return;
         }
         
@@ -317,8 +304,6 @@ async function guardarCategoria(e) {
             mostrarMensaje(data.message || 'Error al guardar la categoría', 'error');
         }
     } catch (error) {
-        console.error('Error al guardar categoría:', error);
-        console.error('Error completo:', error.message, error.stack);
         mostrarMensaje('Error al guardar la categoría: ' + error.message, 'error');
     }
 }
@@ -342,7 +327,6 @@ async function eliminarCategoria(id) {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta:', responseText);
             mostrarMensaje('Error al eliminar la categoría', 'error');
             return;
         }
@@ -354,7 +338,6 @@ async function eliminarCategoria(id) {
             mostrarMensaje(data.message || 'Error al eliminar la categoría', 'error');
         }
     } catch (error) {
-        console.error('Error al eliminar categoría:', error);
         mostrarMensaje('Error al eliminar la categoría', 'error');
     }
 }
@@ -431,5 +414,3 @@ function escapeHtml(text) {
 function filtrarInsumos() {
     filtrarCategorias();
 }
-
-
