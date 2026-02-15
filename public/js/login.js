@@ -71,7 +71,6 @@ async function iniciarSesion(event) {
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta:', responseText);
             mostrarMensaje('Error al procesar la respuesta del servidor', 'error');
             return;
         }
@@ -100,7 +99,6 @@ async function iniciarSesion(event) {
             }
         }
     } catch (error) {
-        console.error('Error al iniciar sesión:', error);
         mostrarMensaje('Error al conectar con el servidor. Por favor, intente nuevamente.', 'error');
         // Habilitar botón nuevamente
         if (btnLogin) {
@@ -117,11 +115,8 @@ function verificarSesion() {
     const token = localStorage.getItem('auth_token');
     const usuario = localStorage.getItem('usuario');
     
-    // Si ya hay sesión, redirigir al inicio
     if (token && usuario) {
-        // Opcional: verificar token con el servidor
-        // Por ahora, solo redirigir si existe
-        // window.location.href = '../../index.html';
+        // Sesión activa detectada
     }
 }
 
@@ -185,4 +180,3 @@ function mostrarMensaje(mensaje, tipo) {
         mensajeDiv.remove();
     }, 5000);
 }
-
