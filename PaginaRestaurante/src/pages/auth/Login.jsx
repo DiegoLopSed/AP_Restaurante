@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
+import PublicNav from '../../components/PublicNav';
 import styles from '../../assets/css/Login.module.css';
 import { useAuth } from '../../contexts/AuthContext';
 
-function guessRedirectPath(usuario) {
+function getEmpleadoRedirectPath(usuario) {
   const pos = (usuario?.posicion || '').toLowerCase();
   if (pos.includes('gerente') || pos.includes('admin')) return '/manager/dashboard';
   return '/user/dashboard';
@@ -19,7 +20,10 @@ export default function Login() {
   const [error, setError] = useState('');
 
   if (isAuthenticated) {
-    return <Navigate to={guessRedirectPath(usuario)} replace />;
+    if (usuario?.tipo === 'cliente') {
+      return <Navigate to="/clients/dashboard" replace />;
+    }
+    return <Navigate to={getEmpleadoRedirectPath(usuario)} replace />;
   }
 
   async function handleSubmit(e) {
@@ -34,7 +38,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { usuario: u } = await login({ correo: correo.trim(), contrasena });
-      navigate(guessRedirectPath(u), { replace: true });
+      navigate(getEmpleadoRedirectPath(u), { replace: true });
     } catch (err) {
       setError(err?.message || 'No se pudo iniciar sesión');
     } finally {
@@ -43,10 +47,12 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Iniciar sesión</h1>
-        <p className={styles.subtitle}>Accede con tu correo y contraseña</p>
+    <>
+      <PublicNav />
+      <div className={styles.page}>
+        <div className={styles.card}>
+        <h1 className={styles.title}>Sistema de Gestión</h1>
+        <p className={styles.subtitle}>Inicio de sesión para empleados y colaboradores</p>
 
         {error && (
           <div className={styles.error} role="alert">
@@ -86,9 +92,17 @@ export default function Login() {
           <button className={styles.button} type="submit" disabled={loading}>
             {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
+
+          <p className={styles.footer}>
+            ¿Eres cliente frecuente?{' '}
+            <Link to="/lealtad" className={styles.link}>
+              Programa de Lealtad
+            </Link>
+          </p>
         </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
