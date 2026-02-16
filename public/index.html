@@ -8,18 +8,22 @@
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>Sistema de Gestión de Restaurante</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html" class="active">Inicio</a></li>
-                    <li><a href="index.php">Estadísticas</a></li>
-                    <li><a href="views/pages/insumos.html">Insumos</a></li>
-                    <li><a href="views/pages/empleados.html">Empleados</a></li>
-                    <li><a href="views/pages/inventario.html">Inventario</a></li>
-                    <li><a href="views/pages/aboutus.html">Sobre Nosotros</a></li>
-                </ul>
-            </nav>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                <h1>Sistema de Gestión de Restaurante</h1>
+                <nav>
+                    <ul>
+                        <li><a href="index.html" class="active">Inicio</a></li>
+                        <li><a href="index.php">Estadísticas</a></li>
+                        <li><a href="views/pages/insumos.html">Insumos</a></li>
+                        <li><a href="views/pages/categorias.html">Categorias</a></li>
+                        <li><a href="views/pages/empleados.html">Empleados</a></li>
+                        <li><a href="views/pages/inventario.html">Inventario</a></li>
+                        <li><a href="views/pages/aboutus.html">Sobre Nosotros</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <a href="views/pages/login.html" class="btn btn-login-header" style="background-color: #4CAF50; color: white; padding: 0.5rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: bold; transition: background-color 0.3s; margin-left: auto;">Iniciar Sesión</a>
         </div>
     </header>
 
@@ -40,6 +44,12 @@
                 <h3>Gestión de Insumos</h3>
                 <p>Administre los insumos del restaurante</p>
                 <a href="views/pages/insumos.html" class="btn">Acceder</a>
+            </div>
+            <!-- Categorias -->
+            <div class="card">
+                <h3>Gestión de Categorias</h3>
+                <p>Administre las categorias de los insumos</p>
+                <a href="views/pages/categorias.html" class="btn">Acceder</a>
             </div>
 
             <div class="card">

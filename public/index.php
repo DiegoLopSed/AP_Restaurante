@@ -185,6 +185,7 @@ $estadisticasAdicionales = obtenerEstadisticasAdicionales($db);
                     <li><a href="index.html">Inicio</a></li>
                     <li><a href="index.php" class="active">Estadísticas</a></li>
                     <li><a href="views/pages/insumos.html">Insumos</a></li>
+                    <li><a href="views/pages/categorias.html">Categorias</a></li>
                     <li><a href="views/pages/empleados.html">Empleados</a></li>
                     <li><a href="views/pages/inventario.html">Inventario</a></li>
                     <li><a href="views/pages/aboutus.html">Sobre Nosotros</a></li>

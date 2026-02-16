@@ -54,6 +54,10 @@ nav ul li a.active {
     background-color: #34495e;
 }
 
+.btn-login-header:hover {
+    background-color: #45a049 !important;
+}
+
 /* Main */
 main {
     padding: 2rem 0;

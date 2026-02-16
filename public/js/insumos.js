@@ -24,15 +24,12 @@ async function cargarCategorias() {
     try {
         const response = await fetch('../../api/categorias.php');
         
-        // Obtener el texto primero para debug
         const responseText = await response.text();
         
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON de categorías. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
             // Si falla, intentar extraer categorías de los insumos como respaldo
             try {
                 const responseInsumos = await fetch('../../api/insumos.php');
@@ -51,12 +48,11 @@ async function cargarCategorias() {
                     });
                     categorias = Object.values(categoriasUnicas);
                 } else {
-                    mostrarMensaje('Error al cargar categorías. Ver consola para detalles.', 'error');
+                    mostrarMensaje('Error al cargar categorías', 'error');
                     return;
                 }
             } catch (fallbackError) {
-                console.error('Error en respaldo al cargar categorías:', fallbackError);
-                mostrarMensaje('Error al cargar categorías. Ver consola para detalles.', 'error');
+                mostrarMensaje('Error al cargar categorías', 'error');
                 return;
             }
         }
@@ -64,8 +60,6 @@ async function cargarCategorias() {
         if (data && data.success) {
             categorias = data.data;
         } else if (!categorias || categorias.length === 0) {
-            // Si no hay categorías cargadas, mostrar error
-            console.error('No se pudieron cargar las categorías');
             mostrarMensaje('No se pudieron cargar las categorías', 'error');
             return;
         }
@@ -94,7 +88,6 @@ async function cargarCategorias() {
             filtroCategoria.appendChild(option2);
         });
     } catch (error) {
-        console.error('Error al cargar categorías:', error);
         mostrarMensaje('Error al cargar categorías', 'error');
     }
 }
@@ -114,7 +107,6 @@ async function cargarInsumos() {
             mostrarMensaje('Error al cargar insumos: ' + data.message, 'error');
         }
     } catch (error) {
-        console.error('Error al cargar insumos:', error);
         mostrarMensaje('Error al cargar insumos', 'error');
         document.getElementById('insumosBody').innerHTML = 
             '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Error al cargar los datos</td></tr>';
@@ -231,7 +223,6 @@ async function editarInsumo(id) {
             mostrarMensaje('Error al cargar el insumo', 'error');
         }
     } catch (error) {
-        console.error('Error al editar insumo:', error);
         mostrarMensaje('Error al cargar el insumo', 'error');
     }
 }
@@ -269,25 +260,20 @@ async function guardarInsumo(e) {
             let errorData;
             try {
                 errorData = JSON.parse(errorText);
-                console.error('Error del servidor (status ' + response.status + '):', errorData);
                 mostrarMensaje(errorData.message || `Error ${response.status}: ${response.statusText}`, 'error');
             } catch (parseError) {
-                console.error('Error no parseable del servidor:', errorText);
                 mostrarMensaje(`Error ${response.status}: ${response.statusText}`, 'error');
             }
             return;
         }
         
-        // Obtener el texto primero para debug
         const responseText = await response.text();
         
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Error al parsear JSON. Respuesta del servidor:', responseText);
-            console.error('Parse error:', parseError);
-            mostrarMensaje('Error: El servidor devolvió una respuesta inválida. Ver consola para detalles.', 'error');
+            mostrarMensaje('Error: El servidor devolvió una respuesta inválida', 'error');
             return;
         }
         
@@ -300,8 +286,6 @@ async function guardarInsumo(e) {
             mostrarMensaje(data.message || 'Error al guardar el insumo', 'error');
         }
     } catch (error) {
-        console.error('Error al guardar insumo:', error);
-        console.error('Error completo:', error.message, error.stack);
         mostrarMensaje('Error al guardar el insumo: ' + error.message, 'error');
     }
 }
@@ -328,7 +312,6 @@ async function eliminarInsumo(id) {
             mostrarMensaje(data.message || 'Error al eliminar el insumo', 'error');
         }
     } catch (error) {
-        console.error('Error al eliminar insumo:', error);
         mostrarMensaje('Error al eliminar el insumo', 'error');
     }
 }
@@ -379,4 +362,3 @@ function escapeHtml(text) {
     };
     return text ? text.replace(/[&<>"']/g, m => map[m]) : '';
 }
-

@@ -38,18 +38,10 @@ try {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     
-    // En desarrollo, mostrar más detalles. En producción, solo el mensaje
     $errorResponse = [
         'success' => false,
         'message' => 'Error: ' . $e->getMessage()
     ];
-    
-    // Agregar detalles de debug solo si estamos en desarrollo
-    if (ini_get('display_errors') || $_SERVER['SERVER_NAME'] === 'localhost') {
-        $errorResponse['file'] = basename($e->getFile());
-        $errorResponse['line'] = $e->getLine();
-        $errorResponse['trace'] = array_slice(explode("\n", $e->getTraceAsString()), 0, 5);
-    }
     
     echo json_encode($errorResponse, JSON_UNESCAPED_UNICODE);
 }
