@@ -15,23 +15,32 @@ import { useAuth } from '../contexts/AuthContext';
 const UserLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, usuario } = useAuth();
   const [activeItem, setActiveItem] = useState('dashboard');
 
+  const basePath = location.pathname.startsWith('/clients') ? '/clients' : '/user';
+  const esCliente = usuario?.tipo === 'cliente';
+
   const navItems = useMemo(
-    () => [
-      { id: 'dashboard', label: 'Dashboard', icon: <ChartBarIcon />, hasArrow: true, to: '/user/dashboard' },
-      { id: 'profile', label: 'Mi Perfil', icon: <UserIcon />, hasArrow: true, to: '/user/profile' },
-      { id: 'orders', label: 'Mis Pedidos', icon: <ShoppingCartIcon />, hasArrow: true, to: '/user/dashboard' },
-    ],
-    []
+    () => {
+      const items = [
+        { id: 'dashboard', label: 'Dashboard', icon: <ChartBarIcon />, hasArrow: true, to: `${basePath}/dashboard` },
+        ...(esCliente ? [] : [{ id: 'profile', label: 'Mi Perfil', icon: <UserIcon />, hasArrow: true, to: '/user/profile' }]),
+        { id: 'orders', label: 'Mis Pedidos', icon: <ShoppingCartIcon />, hasArrow: true, to: `${basePath}/dashboard` },
+      ];
+      return items;
+    },
+    [basePath, esCliente]
   );
 
   useEffect(() => {
     const p = location.pathname;
-    if (p.includes('/user/profile')) setActiveItem('profile');
-    else setActiveItem('dashboard');
-  }, [location.pathname]);
+    if (!esCliente && (p.includes('/user/profile') || p.includes('/profile'))) {
+      setActiveItem('profile');
+    } else {
+      setActiveItem('dashboard');
+    }
+  }, [location.pathname, esCliente]);
 
   const handleNavClick = (itemId) => {
     const item = navItems.find((i) => i.id === itemId);
@@ -40,13 +49,9 @@ const UserLayout = () => {
   };
 
   const handleLogout = () => {
-<<<<<<< HEAD:react-dashboard/PaginaRestaurante/src/layouts/UserLayout.jsx
-    // Lógica de logout aquí
-    console.log('Cerrar sesión');
-=======
+    const esCliente = usuario?.tipo === 'cliente';
     logout();
-    navigate('/login', { replace: true });
->>>>>>> kadidev_Diego:PaginaRestaurante/src/layouts/UserLayout.jsx
+    navigate(esCliente ? '/lealtad' : '/login', { replace: true });
   };
 
   return (
@@ -62,17 +67,13 @@ const UserLayout = () => {
           <Nav 
             items={navItems} 
             activeItem={activeItem}
-<<<<<<< HEAD:react-dashboard/PaginaRestaurante/src/layouts/UserLayout.jsx
-            onItemClick={setActiveItem}
+            onItemClick={handleNavClick}
             logoutItem={{
               icon: <ArrowRightOnRectangleIcon />,
               label: 'Salir',
               onClick: handleLogout,
               ariaLabel: 'Cerrar sesión'
             }}
-=======
-            onItemClick={handleNavClick}
->>>>>>> kadidev_Diego:PaginaRestaurante/src/layouts/UserLayout.jsx
           />
         </nav>
         <button 
