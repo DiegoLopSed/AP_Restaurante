@@ -6,7 +6,9 @@ export default function RequireAuth({ children }) {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    const isClientRoute = location.pathname.startsWith('/clients');
+    const redirectTo = isClientRoute ? '/lealtad' : '/login';
+    return <Navigate to={redirectTo} replace state={{ from: location.pathname }} />;
   }
 
   return children;
