@@ -118,6 +118,25 @@ header nav {
     flex-wrap: nowrap;
 }
 
+/* Logo / icono home: visible en todas las rutas (menú, login, lealtad, etc.) */
+header nav .logo {
+    display: flex;
+    align-items: center;
+}
+header nav .logo a {
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+}
+header nav .logo a:hover {
+    opacity: 0.8;
+}
+header nav .logo svg {
+    color: inherit;
+    fill: none;
+    stroke: currentColor;
+}
+
 /* Menú Hamburguesa - Oculto en desktop */
 .menu-toggle {
     display: none;
