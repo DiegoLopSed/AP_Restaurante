@@ -1,13 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../../assets/css/ManagerDashboard.module.css';
-import Table from '../../components/Table';
 import { 
   fetchUsuarios, 
   createUsuario, 
-  updateUsuario, 
-  deleteUsuario 
+  updateUsuario 
 } from '../../services/usuarios';
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
 
 const Usuarios = () => {
   const [loading, setLoading] = useState(true);
@@ -22,57 +20,13 @@ const Usuarios = () => {
     curp: '',
     correo: '',
     telefono: '',
+    posicion: '',
     contrasena: ''
   });
 
-  const columns = useMemo(
-    () => [
-      { key: 'id_registro', label: 'ID' },
-      { 
-        key: 'nombreCompleto', 
-        label: 'Nombre Completo',
-        render: (value, row) => `${row.nombre || ''} ${row.apellido || ''}`.trim()
-      },
-      { key: 'rfc', label: 'RFC' },
-      { key: 'curp', label: 'CURP' },
-      { key: 'correo', label: 'Correo' },
-      { key: 'telefono', label: 'Teléfono' },
-      {
-        key: 'actions',
-        label: 'Acciones',
-        render: (value, row) => (
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={() => handleEdit(row)}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                cursor: 'pointer',
-                padding: '4px'
-              }}
-              aria-label="Editar"
-            >
-              <PencilIcon style={{ width: '18px', height: '18px' }} />
-            </button>
-            <button
-              onClick={() => handleDelete(row.id_registro)}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                cursor: 'pointer',
-                padding: '4px',
-                color: '#dc2626'
-              }}
-              aria-label="Eliminar"
-            >
-              <TrashIcon style={{ width: '18px', height: '18px' }} />
-            </button>
-          </div>
-        )
-      }
-    ],
-    []
-  );
+  function getNombreCompleto(usuario) {
+    return `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || 'Sin nombre';
+  }
 
   useEffect(() => {
     loadData();
@@ -100,21 +54,10 @@ const Usuarios = () => {
       curp: usuario.curp || '',
       correo: usuario.correo || '',
       telefono: usuario.telefono || '',
-      contrasena: '' // No mostrar contraseña
+      posicion: usuario.posicion || '',
+      contrasena: ''
     });
     setIsModalOpen(true);
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Está seguro de que desea eliminar este usuario?')) {
-      return;
-    }
-    try {
-      await deleteUsuario(id);
-      await loadData();
-    } catch (err) {
-      alert(err?.message || 'Error al eliminar usuario');
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -126,7 +69,8 @@ const Usuarios = () => {
         rfc: formData.rfc,
         curp: formData.curp,
         correo: formData.correo,
-        telefono: formData.telefono
+        telefono: formData.telefono,
+        posicion: formData.posicion
       };
 
       // Solo incluir contraseña si es nuevo usuario o si se proporcionó
@@ -135,10 +79,14 @@ const Usuarios = () => {
       }
 
       if (editingUsuario) {
-        await updateUsuario(editingUsuario.id_registro, data);
+        await updateUsuario(editingUsuario.id_colaborador, data);
       } else {
         if (!formData.contrasena) {
           alert('La contraseña es requerida para nuevos usuarios');
+          return;
+        }
+        if (!formData.posicion?.trim()) {
+          alert('La posición es requerida para nuevos usuarios');
           return;
         }
         await createUsuario(data);
@@ -153,6 +101,7 @@ const Usuarios = () => {
         curp: '', 
         correo: '', 
         telefono: '', 
+        posicion: '', 
         contrasena: '' 
       });
       await loadData();
@@ -175,6 +124,7 @@ const Usuarios = () => {
               curp: '', 
               correo: '', 
               telefono: '', 
+              posicion: '', 
               contrasena: '' 
             });
             setIsModalOpen(true);
@@ -210,11 +160,54 @@ const Usuarios = () => {
       )}
 
       <div className={styles.contentSection}>
-        <Table 
-          columns={columns} 
-          data={usuarios}
-          emptyMessage={loading ? 'Cargando usuarios...' : 'No hay usuarios registrados'}
-        />
+        {loading ? (
+          <p style={{ color: '#666' }}>Cargando usuarios...</p>
+        ) : usuarios.length === 0 ? (
+          <p style={{ color: '#666' }}>No hay usuarios registrados. Agrega uno con el botón superior.</p>
+        ) : (
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {usuarios.map((usuario) => (
+              <li
+                key={usuario.id_colaborador}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 16px',
+                  background: '#fff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                }}
+              >
+                <span style={{ fontWeight: '500', fontSize: '1rem' }}>
+                  {getNombreCompleto(usuario)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleEdit(usuario)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 14px',
+                    border: '1px solid var(--color-primary, #2563eb)',
+                    borderRadius: '6px',
+                    background: 'transparent',
+                    color: 'var(--color-primary, #2563eb)',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    fontSize: '0.875rem'
+                  }}
+                  aria-label="Editar"
+                >
+                  <PencilIcon style={{ width: '18px', height: '18px' }} />
+                  Editar
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {isModalOpen && (
@@ -344,6 +337,25 @@ const Usuarios = () => {
                   required
                   value={formData.telefono}
                   onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '4px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
+                  Posición *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.posicion}
+                  onChange={(e) => setFormData({ ...formData, posicion: e.target.value })}
+                  placeholder="Ej: Cocinero, Mesero, Administrador"
                   style={{
                     width: '100%',
                     padding: '8px 12px',
