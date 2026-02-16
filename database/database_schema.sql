@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-01-2026 a las 07:36:00
+-- Tiempo de generación: 16-02-2026 a las 09:45:35
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `restaurante_db`
+-- Base de datos: `restaurante`
 --
 
 -- --------------------------------------------------------
@@ -35,15 +35,24 @@ CREATE TABLE `categoria` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
 --
--- Volcado de datos para la tabla `categoria`
+-- Estructura de tabla para la tabla `clientes_frecuentes`
 --
 
-INSERT INTO `categoria` (`id_categoria`, `nombre`, `descripcion`, `created_at`, `updated_at`) VALUES
-(1, 'Bebidas', 'Bebidas frías y calientes', '2025-12-23 18:56:15', '2025-12-23 18:56:15'),
-(2, 'Platos principales', 'Platos principales del menú', '2025-12-23 18:56:15', '2025-12-23 18:56:15'),
-(3, 'Postres', 'Postres y dulces', '2025-12-23 18:56:15', '2025-12-23 18:56:15'),
-(4, 'Aperitivos', 'Aperitivos y entradas', '2025-12-23 18:56:15', '2025-12-23 18:56:15');
+CREATE TABLE `clientes_frecuentes` (
+  `id_cliente` int(11) NOT NULL,
+  `codigo_cliente` varchar(20) NOT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `correo` varchar(255) NOT NULL,
+  `telefono` varchar(20) NOT NULL,
+  `pass` varchar(255) NOT NULL,
+  `direccion_entrega` text NOT NULL,
+  `bonos` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -70,7 +79,7 @@ CREATE TABLE `colaboradores` (
 --
 
 INSERT INTO `colaboradores` (`id_colaborador`, `nombre`, `apellido`, `rfc`, `curp`, `correo`, `telefono`, `pass`, `posicion`, `created_at`, `updated_at`) VALUES
-(1, 'Diego', 'Lopez Sedeño', 'LOSD030716TI0', 'LOSD030716HPLPDGB2', 'dieguito123@gmail.com', '2212354124', '$2y$10$wFKc5y5Gosd7h5/gQ4j25uermG3HC74FT82kdWvELD38Gj7mKCPvS', 'Cocinero', '2026-01-28 06:18:05', '2026-01-28 06:30:01');
+(1, 'Diego', 'Lopez Sedeño', 'LOSD030716TI0', 'LOSD030716HPLPDGB2', 'dieguito123@gmail.com', '2212354124', '$2y$10$wFKc5y5Gosd7h5/gQ4j25uermG3HC74FT82kdWvELD38Gj7mKCPvS', 'Gerente', '2026-01-28 06:18:05', '2026-02-16 04:52:49');
 
 -- --------------------------------------------------------
 
@@ -133,14 +142,6 @@ CREATE TABLE `insumo` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `insumo`
---
-
-INSERT INTO `insumo` (`id_insumo`, `id_categoria`, `nombre`, `stock`, `fecha_ultimo_pedido`, `created_at`, `updated_at`) VALUES
-(2, 4, 'guiosas', 4, '2025-12-23', '2025-12-24 01:28:28', '2026-01-22 07:43:58'),
-(5, 2, 'Aceite', 10, '2026-01-22', '2026-01-22 07:44:23', '2026-01-28 06:17:25');
-
 -- --------------------------------------------------------
 
 --
@@ -190,16 +191,6 @@ CREATE TABLE `metodo_pago` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `metodo_pago`
---
-
-INSERT INTO `metodo_pago` (`id_metodo_pago`, `nombre_metodo`, `datos_emisor`, `created_at`, `updated_at`) VALUES
-(1, 'Efectivo', 'Pago en efectivo', '2025-12-23 18:56:15', '2025-12-23 18:56:15'),
-(2, 'Tarjeta de crédito', 'Terminal punto de venta', '2025-12-23 18:56:15', '2025-12-23 18:56:15'),
-(3, 'Tarjeta de débito', 'Terminal punto de venta', '2025-12-23 18:56:15', '2025-12-23 18:56:15'),
-(4, 'Transferencia bancaria', 'Banco emisor', '2025-12-23 18:56:15', '2025-12-23 18:56:15');
 
 -- --------------------------------------------------------
 
@@ -277,6 +268,18 @@ CREATE TABLE `producto_ingrediente` (
 --
 ALTER TABLE `categoria`
   ADD PRIMARY KEY (`id_categoria`);
+
+--
+-- Indices de la tabla `clientes_frecuentes`
+--
+ALTER TABLE `clientes_frecuentes`
+  ADD PRIMARY KEY (`id_cliente`),
+  ADD UNIQUE KEY `codigo_cliente` (`codigo_cliente`),
+  ADD UNIQUE KEY `correo` (`correo`),
+  ADD UNIQUE KEY `telefono` (`telefono`),
+  ADD KEY `idx_clientes_codigo` (`codigo_cliente`),
+  ADD KEY `idx_clientes_correo` (`correo`),
+  ADD KEY `idx_clientes_telefono` (`telefono`);
 
 --
 -- Indices de la tabla `colaboradores`
@@ -380,7 +383,13 @@ ALTER TABLE `producto_ingrediente`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `clientes_frecuentes`
+--
+ALTER TABLE `clientes_frecuentes`
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `colaboradores`
@@ -404,7 +413,7 @@ ALTER TABLE `ingrediente`
 -- AUTO_INCREMENT de la tabla `insumo`
 --
 ALTER TABLE `insumo`
-  MODIFY `id_insumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_insumo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `lista`
@@ -416,7 +425,7 @@ ALTER TABLE `lista`
 -- AUTO_INCREMENT de la tabla `metodo_pago`
 --
 ALTER TABLE `metodo_pago`
-  MODIFY `id_metodo_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_metodo_pago` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido`
