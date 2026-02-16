@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { BuildingStorefrontIcon } from '@heroicons/react/24/outline';
 import '../assets/css/homepage.css';
 
 const PublicNav = () => {
@@ -26,9 +27,8 @@ const PublicNav = () => {
     <header id="main-header" className="scrolled">
       <nav>
         <div className="logo">
-          <Link to="/" onClick={handleNavClick}>
-            {/* Reemplaza este span por tu <img src="..."> cuando tengas el logo */}
-            <span>Logo</span>
+          <Link to="/" onClick={handleNavClick} aria-label="Inicio">
+            <BuildingStorefrontIcon style={{ width: 32, height: 32 }} />
           </Link>
         </div>
         <button
@@ -45,7 +45,12 @@ const PublicNav = () => {
         <ul id="nav-menu" className={isMenuOpen ? 'active' : ''}>
           <li>
             <Link to="/menu" onClick={handleNavClick}>
-              Menu
+              Menú
+            </Link>
+          </li>
+          <li>
+            <Link to="/lealtad" onClick={handleNavClick} title="Regístrate o inicia sesión como cliente frecuente">
+              Lealtad
             </Link>
           </li>
           <li>
@@ -57,8 +62,8 @@ const PublicNav = () => {
             </a>
           </li>
           <li>
-            <Link to="/login" onClick={handleNavClick}>
-              Sistema de Gestión
+            <Link to="/login" onClick={handleNavClick} title="Acceso para empleados y colaboradores">
+              Empleados
             </Link>
           </li>
         </ul>
