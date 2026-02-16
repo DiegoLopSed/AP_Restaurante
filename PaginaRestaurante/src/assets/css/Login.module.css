@@ -3,6 +3,8 @@
   display: grid;
   place-items: center;
   padding: 24px;
+  /* Espacio para el nav fijo (PublicNav) */
+  padding-top: calc(60px + 24px);
   background: radial-gradient(1200px circle at 10% 10%, rgba(76, 175, 80, 0.12), transparent 45%),
     radial-gradient(900px circle at 90% 20%, rgba(33, 150, 243, 0.10), transparent 40%),
     #0b1220;
@@ -83,4 +85,19 @@
   cursor: not-allowed;
 }
 
+.footer {
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
 
+.link {
+  color: #4caf50;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
