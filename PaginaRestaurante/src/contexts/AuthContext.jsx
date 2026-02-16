@@ -31,6 +31,32 @@ export function AuthProvider({ children }) {
     return { token: nextToken, usuario: nextUser };
   }
 
+  /** Login de clientes frecuentes (correo o teléfono + contraseña) */
+  async function loginCliente({ correoOTelefono, contrasena }) {
+    const data = await authService.loginCliente({ correoOTelefono, contrasena });
+    const nextToken = data?.token || '';
+    const nextUser = data?.usuario || null;
+
+    localStorage.setItem('ap_restaurante_token', nextToken);
+    localStorage.setItem('ap_restaurante_usuario', JSON.stringify(nextUser));
+
+    setToken(nextToken);
+    setUsuario(nextUser);
+
+    return { token: nextToken, usuario: nextUser };
+  }
+
+  /** Registro de clientes frecuentes */
+  async function registroCliente({ nombre, correo, telefono, direccionEntrega, contrasena }) {
+    return authService.registroCliente({
+      nombre,
+      correo,
+      telefono,
+      direccionEntrega,
+      contrasena,
+    });
+  }
+
   function logout() {
     authService.logout();
     setToken('');
@@ -38,7 +64,15 @@ export function AuthProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ token, usuario, isAuthenticated, login, logout }),
+    () => ({
+      token,
+      usuario,
+      isAuthenticated,
+      login,
+      loginCliente,
+      registroCliente,
+      logout,
+    }),
     [token, usuario, isAuthenticated]
   );
 
