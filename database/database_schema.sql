@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-02-2026 a las 09:45:35
+-- Tiempo de generación: 11-03-2026 a las 10:48:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -35,6 +35,16 @@ CREATE TABLE `categoria` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `categoria`
+--
+
+INSERT INTO `categoria` (`id_categoria`, `nombre`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 'Lácteos', 'Productos derivados de la leche', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(2, 'Carnes', 'Carnes rojas y blancas', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(3, 'Verduras', 'Vegetales frescos', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(4, 'Bebidas', 'Bebidas frías y calientes', '2026-03-11 08:47:24', '2026-03-11 08:47:24');
+
 -- --------------------------------------------------------
 
 --
@@ -53,6 +63,13 @@ CREATE TABLE `clientes_frecuentes` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `clientes_frecuentes`
+--
+
+INSERT INTO `clientes_frecuentes` (`id_cliente`, `codigo_cliente`, `nombre`, `correo`, `telefono`, `pass`, `direccion_entrega`, `bonos`, `created_at`, `updated_at`) VALUES
+(1, 'CLI-NVEBCC', 'Diego Lopez Sedeño', 'dieguito160703@gmail.com', '522212354124', '$2y$10$1o6KY9W8ZG568BgMd4dGSeMVaWcNacd3XCc2GXL/HSS/pLPQGeD5K', 'Calle Querétaro 10138 Col Popular Emiliano Zapata', 0, '2026-03-11 09:33:57', '2026-03-11 09:33:57');
 
 -- --------------------------------------------------------
 
@@ -79,7 +96,8 @@ CREATE TABLE `colaboradores` (
 --
 
 INSERT INTO `colaboradores` (`id_colaborador`, `nombre`, `apellido`, `rfc`, `curp`, `correo`, `telefono`, `pass`, `posicion`, `created_at`, `updated_at`) VALUES
-(1, 'Diego', 'Lopez Sedeño', 'LOSD030716TI0', 'LOSD030716HPLPDGB2', 'dieguito123@gmail.com', '2212354124', '$2y$10$wFKc5y5Gosd7h5/gQ4j25uermG3HC74FT82kdWvELD38Gj7mKCPvS', 'Gerente', '2026-01-28 06:18:05', '2026-02-16 04:52:49');
+(1, 'Diego', 'Lopez Sedeño', 'LOSD030716TI0', 'LOSD030716HPLPDGB2', 'dieguito123@gmail.com', '2212354124', '$2y$10$wFKc5y5Gosd7h5/gQ4j25uermG3HC74FT82kdWvELD38Gj7mKCPvS', 'Gerente', '2026-01-28 06:18:05', '2026-02-16 04:52:49'),
+(2, 'Laura Rubi', 'Franco Garcia', 'TEMP567890123', 'TEMP030716HPLPDGB3', 'francogarciarubi3@gmail.com', '2222022202', '$2y$10$tPTdprxD5NdOyweKqPMdq./1BegvXGEvO.IAqfraTg078fH87Ov8i', 'Mesero', '2026-03-11 08:41:20', '2026-03-11 08:41:20');
 
 -- --------------------------------------------------------
 
@@ -141,6 +159,25 @@ CREATE TABLE `insumo` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `insumo`
+--
+
+INSERT INTO `insumo` (`id_insumo`, `id_categoria`, `nombre`, `stock`, `fecha_ultimo_pedido`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Leche entera 1L', 50, '2026-03-01', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(2, 1, 'Queso manchego 1kg', 15, '2026-02-25', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(3, 1, 'Crema ácida 1L', 20, '2026-03-05', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(4, 2, 'Pechuga de pollo 1kg', 30, '2026-03-03', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(5, 2, 'Carne de res molida 1kg', 18, '2026-03-02', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(6, 2, 'Tocino ahumado 1kg', 10, '2026-02-28', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(7, 3, 'Tomate saladet 1kg', 25, '2026-03-04', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(8, 3, 'Cebolla blanca 1kg', 22, '2026-03-04', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(9, 3, 'Lechuga romana pieza', 12, '2026-03-01', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(10, 3, 'Cilantro manojo', 30, '2026-03-06', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(11, 4, 'Refresco cola 355ml', 60, '2026-03-02', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(12, 4, 'Agua mineral 600ml', 80, '2026-03-03', '2026-03-11 08:47:24', '2026-03-11 08:47:24'),
+(13, 4, 'Café molido 1kg', 8, '2026-02-27', '2026-03-11 08:47:24', '2026-03-11 08:47:24');
 
 -- --------------------------------------------------------
 
@@ -383,19 +420,19 @@ ALTER TABLE `producto_ingrediente`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes_frecuentes`
 --
 ALTER TABLE `clientes_frecuentes`
-  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `colaboradores`
 --
 ALTER TABLE `colaboradores`
-  MODIFY `id_colaborador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_colaborador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
@@ -413,7 +450,7 @@ ALTER TABLE `ingrediente`
 -- AUTO_INCREMENT de la tabla `insumo`
 --
 ALTER TABLE `insumo`
-  MODIFY `id_insumo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_insumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `lista`
