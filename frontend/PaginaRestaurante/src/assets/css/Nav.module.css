@@ -58,8 +58,7 @@
   color: var(--color-background);
 }
 
-.navItem.active .icon svg,
-.navItem.active .arrow svg {
+.navItem.active .icon svg {
   color: var(--color-background);
   stroke: var(--color-background);
 }
@@ -89,28 +88,11 @@
   font-weight: 500;
 }
 
-.arrow {
-  margin-left: auto;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  min-height: 18px;
-}
-
-.arrow svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 2;
-  color: currentColor;
-}
-
 @media (max-width: 768px) {
   .nav {
     position: relative;
+    z-index: 1;
+    overflow: visible;
   }
 
   .mobileMenuButton {
@@ -118,7 +100,7 @@
     position: fixed;
     top: var(--spacing-sm);
     right: var(--spacing-sm);
-    z-index: 1001;
+    z-index: 1100;
     background-color: var(--color-secondary);
     border-radius: var(--border-radius-sm);
     padding: var(--spacing-sm);
@@ -142,7 +124,7 @@
     height: 100vh;
     background-color: var(--color-secondary);
     box-shadow: var(--shadow-lg);
-    z-index: 1000;
+    z-index: 1090;
     padding: var(--spacing-lg) 0;
     margin: 0;
     flex-direction: column;
@@ -189,18 +171,6 @@
     height: 18px;
   }
 
-  .arrow {
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    min-height: 16px;
-  }
-
-  .arrow svg {
-    width: 16px;
-    height: 16px;
-  }
-
   .label {
     font-size: var(--font-size-small);
   }
@@ -213,7 +183,7 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
-    z-index: 999;
+    z-index: 1080;
     animation: fadeIn 0.3s ease;
   }
 
@@ -240,8 +210,7 @@
     color: var(--color-background);
   }
 
-  .navListOpen .navItem.active .icon svg,
-  .navListOpen .navItem.active .arrow svg {
+  .navListOpen .navItem.active .icon svg {
     color: var(--color-background);
   }
 

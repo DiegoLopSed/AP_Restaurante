@@ -100,47 +100,8 @@ p {
   border-width: 0;
 }
 
-/* Ocultar scrollbars pero mantener funcionalidad de scroll */
-/* Para navegadores WebKit (Chrome, Safari, Edge) */
-*::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-/* Para Firefox */
-* {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-/* Para IE y Edge antiguo */
-* {
-  -ms-overflow-style: none;
-}
-
-/* Asegurar que el scroll funcione */
-html {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-html::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-body {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-body::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
+/* Scrollbars: usar estilo por defecto del navegador para no romper layouts,
+   sólo se pueden ocultar de forma localizada en componentes que lo requieran. */
 
 /* Responsive breakpoints */
 @media (max-width: 768px) {

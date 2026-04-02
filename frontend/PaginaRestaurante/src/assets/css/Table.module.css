@@ -37,6 +37,18 @@
   background-color: rgba(139, 69, 19, 0.05);
 }
 
+.tableRowClickable {
+  cursor: pointer;
+}
+
+.rowSelected {
+  background-color: rgba(139, 69, 19, 0.12);
+}
+
+.rowSelected:hover {
+  background-color: rgba(139, 69, 19, 0.16);
+}
+
 .tableRow:last-child {
   border-bottom: none;
 }
