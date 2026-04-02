@@ -26,7 +26,6 @@ const Insumos = () => {
 
   const columns = useMemo(
     () => [
-      { key: 'id_insumo', label: 'ID' },
       { key: 'nombre', label: 'Nombre' },
       { 
         key: 'categoria', 
@@ -192,6 +191,7 @@ const Insumos = () => {
         <Table 
           columns={columns} 
           data={insumos}
+          rowKey="id_insumo"
           emptyMessage={loading ? 'Cargando insumos...' : 'No hay insumos registrados'}
         />
       </div>
@@ -207,7 +207,7 @@ const Insumos = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 1000
+          zIndex: 1200
         }}>
           <div style={{
             background: 'white',

@@ -17,12 +17,12 @@ const Categorias = () => {
   const [editingCategoria, setEditingCategoria] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
-    descripcion: ''
+    descripcion: '',
+    tipo_categoria: 'producto',
   });
 
   const columns = useMemo(
     () => [
-      { key: 'id_categoria', label: 'ID' },
       { key: 'nombre', label: 'Nombre' },
       { key: 'descripcion', label: 'Descripción' },
       {
@@ -83,7 +83,8 @@ const Categorias = () => {
     setEditingCategoria(categoria);
     setFormData({
       nombre: categoria.nombre || '',
-      descripcion: categoria.descripcion || ''
+      descripcion: categoria.descripcion || '',
+      tipo_categoria: categoria.tipo_categoria || 'producto',
     });
     setIsModalOpen(true);
   };
@@ -105,7 +106,8 @@ const Categorias = () => {
     try {
       const data = {
         nombre: formData.nombre,
-        descripcion: formData.descripcion || null
+        descripcion: formData.descripcion || null,
+        tipo_categoria: formData.tipo_categoria || 'producto',
       };
 
       if (editingCategoria) {
@@ -116,7 +118,7 @@ const Categorias = () => {
       
       setIsModalOpen(false);
       setEditingCategoria(null);
-      setFormData({ nombre: '', descripcion: '' });
+      setFormData({ nombre: '', descripcion: '', tipo_categoria: 'producto' });
       await loadData();
     } catch (err) {
       alert(err?.message || 'Error al guardar categoría');
@@ -130,7 +132,7 @@ const Categorias = () => {
         <button
           onClick={() => {
             setEditingCategoria(null);
-            setFormData({ nombre: '', descripcion: '' });
+            setFormData({ nombre: '', descripcion: '', tipo_categoria: 'producto' });
             setIsModalOpen(true);
           }}
           style={{
@@ -167,6 +169,7 @@ const Categorias = () => {
         <Table 
           columns={columns} 
           data={categorias}
+          rowKey="id_categoria"
           emptyMessage={loading ? 'Cargando categorías...' : 'No hay categorías registradas'}
         />
       </div>
@@ -182,7 +185,7 @@ const Categorias = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 1000
+          zIndex: 1200
         }}>
           <div style={{
             background: 'white',
@@ -231,6 +234,28 @@ const Categorias = () => {
                     resize: 'vertical'
                   }}
                 />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
+                  Tipo de categoría *
+                </label>
+                <select
+                  value={formData.tipo_categoria}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tipo_categoria: e.target.value })
+                  }
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '4px',
+                  }}
+                  required
+                >
+                  <option value="producto">Para productos</option>
+                  <option value="insumo">Para insumos</option>
+                </select>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>

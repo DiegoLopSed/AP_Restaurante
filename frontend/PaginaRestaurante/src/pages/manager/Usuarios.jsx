@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import styles from '../../assets/css/ManagerDashboard.module.css';
+import Table from '../../components/Table';
 import { 
   fetchUsuarios, 
   createUsuario, 
@@ -20,13 +21,66 @@ const Usuarios = () => {
     curp: '',
     correo: '',
     telefono: '',
-    posicion: '',
+    posicion: 'Mesero',
     contrasena: ''
   });
+
+  const POSICIONES = [
+    'Gerente',
+    'Administrador',
+    'Chef',
+    'Cocinero',
+    'Ayudante de cocina',
+    'Mesero',
+    'Repartidor',
+    'Cajero',
+    'Host',
+    'Limpieza',
+  ];
 
   function getNombreCompleto(usuario) {
     return `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || 'Sin nombre';
   }
+
+  const columns = useMemo(
+    () => [
+      {
+        key: 'nombre',
+        label: 'Nombre',
+        render: (value, row) => getNombreCompleto(row),
+      },
+      { key: 'correo', label: 'Correo' },
+      { key: 'telefono', label: 'Teléfono' },
+      { key: 'posicion', label: 'Posición' },
+      {
+        key: 'actions',
+        label: 'Acciones',
+        render: (value, row) => (
+          <button
+            type="button"
+            onClick={() => handleEdit(row)}
+            style={{
+              padding: '6px 10px',
+              borderRadius: '6px',
+              border: '1px solid var(--color-primary, #2563eb)',
+              background: 'transparent',
+              color: 'var(--color-primary, #2563eb)',
+              cursor: 'pointer',
+              fontSize: '0.8rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+            aria-label="Editar"
+          >
+            <PencilIcon style={{ width: 16, height: 16 }} />
+            Editar
+          </button>
+        ),
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     loadData();
@@ -54,7 +108,7 @@ const Usuarios = () => {
       curp: usuario.curp || '',
       correo: usuario.correo || '',
       telefono: usuario.telefono || '',
-      posicion: usuario.posicion || '',
+      posicion: usuario.posicion || 'Mesero',
       contrasena: ''
     });
     setIsModalOpen(true);
@@ -101,7 +155,7 @@ const Usuarios = () => {
         curp: '', 
         correo: '', 
         telefono: '', 
-        posicion: '', 
+        posicion: 'Mesero', 
         contrasena: '' 
       });
       await loadData();
@@ -112,7 +166,16 @@ const Usuarios = () => {
 
   return (
     <div className={styles.dashboard}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '12px',
+          flexWrap: 'wrap',
+          marginBottom: '24px',
+        }}
+      >
         <h1 className={styles.greeting}>Gestión de Usuarios</h1>
         <button
           onClick={() => {
@@ -124,7 +187,7 @@ const Usuarios = () => {
               curp: '', 
               correo: '', 
               telefono: '', 
-              posicion: '', 
+              posicion: 'Mesero', 
               contrasena: '' 
             });
             setIsModalOpen(true);
@@ -160,54 +223,16 @@ const Usuarios = () => {
       )}
 
       <div className={styles.contentSection}>
-        {loading ? (
-          <p style={{ color: '#666' }}>Cargando usuarios...</p>
-        ) : usuarios.length === 0 ? (
-          <p style={{ color: '#666' }}>No hay usuarios registrados. Agrega uno con el botón superior.</p>
-        ) : (
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {usuarios.map((usuario) => (
-              <li
-                key={usuario.id_colaborador}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 16px',
-                  background: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                }}
-              >
-                <span style={{ fontWeight: '500', fontSize: '1rem' }}>
-                  {getNombreCompleto(usuario)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleEdit(usuario)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 14px',
-                    border: '1px solid var(--color-primary, #2563eb)',
-                    borderRadius: '6px',
-                    background: 'transparent',
-                    color: 'var(--color-primary, #2563eb)',
-                    cursor: 'pointer',
-                    fontWeight: '500',
-                    fontSize: '0.875rem'
-                  }}
-                  aria-label="Editar"
-                >
-                  <PencilIcon style={{ width: '18px', height: '18px' }} />
-                  Editar
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <Table
+          columns={columns}
+          data={usuarios}
+          rowKey="id_colaborador"
+          emptyMessage={
+            loading
+              ? 'Cargando usuarios...'
+              : 'No hay usuarios registrados. Agrega uno con el botón superior.'
+          }
+        />
       </div>
 
       {isModalOpen && (
@@ -221,7 +246,7 @@ const Usuarios = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 1000
+          zIndex: 1200
         }}>
           <div style={{
             background: 'white',
@@ -350,19 +375,24 @@ const Usuarios = () => {
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
                   Posición *
                 </label>
-                <input
-                  type="text"
+                <select
                   required
                   value={formData.posicion}
                   onChange={(e) => setFormData({ ...formData, posicion: e.target.value })}
-                  placeholder="Ej: Cocinero, Mesero, Administrador"
                   style={{
                     width: '100%',
                     padding: '8px 12px',
                     border: '1px solid #e0e0e0',
                     borderRadius: '4px'
                   }}
-                />
+                >
+                  <option value="">Selecciona una posición</option>
+                  {POSICIONES.map((pos) => (
+                    <option key={pos} value={pos}>
+                      {pos}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div style={{ marginBottom: '20px' }}>

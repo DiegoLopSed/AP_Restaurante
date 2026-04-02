@@ -40,7 +40,6 @@ const Orders = () => {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>ID Pedido</th>
                 <th>Cliente</th>
                 <th>Estado</th>
                 <th>Total</th>
@@ -49,8 +48,7 @@ const Orders = () => {
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
+                <tr key={`${order.cliente}-${order.hora}`}>
                   <td>{order.cliente}</td>
                   <td>
                     <span

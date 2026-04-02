@@ -231,12 +231,11 @@ const ManagerDashboard = () => {
           <div className={styles.ordersContent}>
             <h4 className={styles.ordersSubtitle}>Pedidos recientes</h4>
             <div className={styles.ordersList} role="list">
-              {recentOrders.map((order) => (
-                <div key={order.id} className={styles.orderItem} role="listitem">
+              {recentOrders.map((order, index) => (
+                <div key={`${order.cliente}-${index}`} className={styles.orderItem} role="listitem">
                   <div className={styles.orderAvatar}>{order.avatar}</div>
                   <div className={styles.orderInfo}>
-                    <div className={styles.orderNumber}>Pedidos #{order.id}</div>
-                    <div className={styles.orderClient}>{order.cliente}</div>
+                    <div className={styles.orderNumber}>{order.cliente}</div>
                   </div>
                   <div className={`${styles.orderAmount} ${order.monto < 0 ? styles.orderAmountNegative : ''}`}>
                     {order.monto < 0 ? '-' : ''} ${Math.abs(order.monto).toFixed(2)}
