@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import styles from '../assets/css/Nav.module.css';
 
 const Nav = ({ items = [], activeItem, onItemClick, logoutItem }) => {
@@ -54,7 +53,6 @@ const Nav = ({ items = [], activeItem, onItemClick, logoutItem }) => {
             >
               {item.icon && <span className={styles.icon}>{item.icon}</span>}
               <span className={styles.label}>{item.label}</span>
-              {item.hasArrow && <ArrowRightIcon className={styles.arrow} />}
             </button>
           </li>
         ))}
