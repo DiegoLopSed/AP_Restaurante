@@ -3,12 +3,14 @@ import UserLayout from "./layouts/UserLayout";
 import ManagerLayout from "./layouts/ManagerLayout";
 import UserDashboard from "./pages/user/Dashboard";
 import UserProfile from "./pages/user/Profile";
+import UserPedidos from "./pages/user/Pedidos";
 import ManagerDashboard from "./pages/manager/Dashboard";
 import ManagerEmployees from "./pages/manager/Employees";
 import ManagerInsumos from "./pages/manager/Insumos";
 import ManagerCategorias from "./pages/manager/Categorias";
 import ManagerUsuarios from "./pages/manager/Usuarios";
 import ManagerProductos from "./pages/manager/Productos";
+import ManagerReportes from "./pages/manager/Reportes";
 import ClientOrders from "./pages/manager/Orders";
 import ClientPromotions from "./pages/manager/Promotions";
 import ClientDashboard from "./pages/clients/Dashboard";
@@ -64,6 +66,7 @@ function App() {
           <Route index element={<Navigate to="/user/dashboard" replace />} />
           <Route path="dashboard" element={<UserDashboard />} />
           <Route path="profile" element={<UserProfile />} />
+          <Route path="pedidos" element={<UserPedidos />} />
         </Route>
 
         {/* Rutas de clientes frecuentes */}
@@ -103,6 +106,7 @@ function App() {
           <Route path="categorias" element={<ManagerCategorias />} />
           <Route path="usuarios" element={<ManagerUsuarios />} />
           <Route path="productos" element={<ManagerProductos />} />
+          <Route path="reports" element={<ManagerReportes />} />
         </Route>
 
         {/* Ruta por defecto para rutas no encontradas */}
