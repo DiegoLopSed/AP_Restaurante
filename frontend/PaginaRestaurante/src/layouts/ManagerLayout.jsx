@@ -6,13 +6,11 @@ import {
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
-  BoltIcon,
   CubeIcon,
   TagIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
 import Nav from '../components/Nav';
-import Footer from '../components/Footer';
 import styles from '../assets/css/ManagerLayout.module.css';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -24,14 +22,14 @@ const ManagerLayout = () => {
 
   const navItems = useMemo(
     () => [
-      { id: 'dashboard', label: 'Dashboard', icon: <ChartBarIcon />, hasArrow: true, to: '/manager/dashboard' },
-      { id: 'insumos', label: 'Insumos', icon: <CubeIcon />, hasArrow: true, to: '/manager/insumos' },
-      { id: 'categorias', label: 'Categorías', icon: <TagIcon />, hasArrow: true, to: '/manager/categorias' },
-      { id: 'crear-producto', label: 'Crear productos', icon: <CubeIcon />, hasArrow: true, to: '/manager/productos' },
-      { id: 'usuarios', label: 'Usuarios', icon: <UserIcon />, hasArrow: true, to: '/manager/usuarios' },
-      { id: 'employees', label: 'Empleados', icon: <UserGroupIcon />, hasArrow: true, to: '/manager/employees' },
-      { id: 'reports', label: 'Reportes', icon: <ClipboardDocumentListIcon />, hasArrow: true, to: '/manager/dashboard' },
-      { id: 'settings', label: 'Configuración', icon: <Cog6ToothIcon />, hasArrow: true, to: '/manager/dashboard' },
+      { id: 'dashboard', label: 'Dashboard', icon: <ChartBarIcon />, to: '/manager/dashboard' },
+      { id: 'insumos', label: 'Insumos', icon: <CubeIcon />, to: '/manager/insumos' },
+      { id: 'categorias', label: 'Categorías', icon: <TagIcon />, to: '/manager/categorias' },
+      { id: 'crear-producto', label: 'Crear productos', icon: <CubeIcon />, to: '/manager/productos' },
+      { id: 'usuarios', label: 'Usuarios', icon: <UserIcon />, to: '/manager/usuarios' },
+      { id: 'employees', label: 'Empleados', icon: <UserGroupIcon />, to: '/manager/employees' },
+      { id: 'reports', label: 'Reportes', icon: <ClipboardDocumentListIcon />, to: '/manager/reports' },
+      { id: 'settings', label: 'Configuración', icon: <Cog6ToothIcon />, to: '/manager/dashboard' },
     ],
     []
   );
@@ -63,12 +61,6 @@ const ManagerLayout = () => {
   return (
     <div className={styles.layout}>
       <aside className={styles.sidebar} role="complementary">
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <BoltIcon />
-          </div>
-          <span className={styles.logoText}>Dashboard v.01</span>
-        </div>
         <nav className={styles.navSection} role="navigation">
           <Nav 
             items={navItems} 
@@ -87,7 +79,6 @@ const ManagerLayout = () => {
         <div className={styles.contentArea}>
           <Outlet />
         </div>
-        <Footer />
       </main>
     </div>
   );
