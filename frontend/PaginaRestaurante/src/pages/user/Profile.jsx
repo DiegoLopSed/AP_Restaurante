@@ -1,18 +1,25 @@
-import styles from '../../assets/css/UserDashboard.module.css';
+import styles from '../../assets/css/ManagerDashboard.module.css';
 
 const UserProfile = () => {
   return (
     <div className={styles.dashboard}>
-      <h1 className={styles.greeting}>Mi Perfil</h1>
-      <div className={styles.infoGrid}>
-        <div className={styles.infoCard}>
-          <div className={styles.infoLabel}>Página de perfil</div>
-          <div className={styles.infoValue}>En construcción</div>
+      <h1 className={styles.greeting}>Mi perfil</h1>
+
+      <section className={styles.additionalInfoCard} aria-label="Estado del perfil">
+        <h2 className={styles.additionalInfoTitle}>Estado</h2>
+        <div className={styles.additionalInfoList}>
+          <div className={styles.additionalInfoItem}>
+            <div className={styles.additionalInfoContent}>
+              <div className={styles.additionalInfoLabel}>Página de perfil</div>
+              <div className={styles.additionalInfoDescription}>
+                En construcción. Aquí podrás ver y editar tus datos cuando esté disponible.
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
 
 export default UserProfile;
-
