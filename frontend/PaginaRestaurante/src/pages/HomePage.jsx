@@ -135,45 +135,6 @@ const HomePage = () => {
         <h2>Sigue las ultimas novedades</h2>
         <p>daily</p>
       </section>
-
-      {/* Pie de Página */}
-      <footer>
-        <div>
-          <p>{APP_TEXT.SITE_NAME}</p>
-          <div>
-            <a href="#" aria-label="Facebook">F</a>
-            <a href="#" aria-label="LinkedIn">In</a>
-            <a href="#" aria-label="YouTube">YT</a>
-            <a href="#" aria-label="Instagram">IG</a>
-          </div>
-        </div>
-        <div>
-          <div>
-            <h4>Tema</h4>
-            <ul>
-              <li><a href="#">Página</a></li>
-              <li><a href="#">Página</a></li>
-              <li><a href="#">Página</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4>Tema</h4>
-            <ul>
-              <li><a href="#">Página</a></li>
-              <li><a href="#">Página</a></li>
-              <li><a href="#">Página</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4>Tema</h4>
-            <ul>
-              <li><a href="#">Página</a></li>
-              <li><a href="#">Página</a></li>
-              <li><a href="#">Página</a></li>
-            </ul>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
