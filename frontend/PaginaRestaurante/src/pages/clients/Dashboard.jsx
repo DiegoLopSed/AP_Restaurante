@@ -1,7 +1,6 @@
 import styles from '../../assets/css/ClientDashboard.module.css';
 import Card from '../../components/Card';
 import {
-  UserIcon,
   IdentificationIcon,
   ShoppingCartIcon,
   FireIcon,
@@ -102,57 +101,38 @@ const ClientDashboard = () => {
     <div className={styles.dashboard}>
       <h1 className={styles.greeting}>Hola {clientData.nombre.split(' ')[0]} 👋</h1>
       
-      {/* Sección superior: Perfil e Información del Cliente */}
-      <div className={styles.topSection}>
-        {/* Tarjeta de perfil */}
-        <article className={styles.profileCard}>
-          <header className={styles.profileHeader}>
-            <div className={styles.profileAvatarContainer}>
-              <div className={styles.profileAvatar}>
-                <UserIcon />
-              </div>
-            </div>
-            <div className={styles.profileInfo}>
-              <h2 className={styles.profileName}>{clientData.nombre}</h2>
-              <p className={styles.profileRole}>Cliente Frecuente</p>
-            </div>
-          </header>
-        </article>
-
-        {/* Información del cliente */}
-        <section className={styles.clientInfoCard} aria-label="Información del cliente">
-          <h3 className={styles.clientInfoTitle}>Información del cliente</h3>
-          <div className={styles.clientInfoList}>
-            <div className={styles.clientInfoItem}>
-              <span className={styles.clientInfoIcon} aria-hidden="true">
-                <IdentificationIcon />
-              </span>
-              <div className={styles.clientInfoContent}>
-                <div className={styles.clientInfoLabel}>ID de Cliente</div>
-                <div className={styles.clientInfoValue}>{clientData.idCliente}</div>
-              </div>
-            </div>
-            <div className={styles.clientInfoItem}>
-              <span className={styles.clientInfoIcon} aria-hidden="true">
-                <FireIcon />
-              </span>
-              <div className={styles.clientInfoContent}>
-                <div className={styles.clientInfoLabel}>Racha de pedidos</div>
-                <div className={styles.clientInfoValue}>{clientData.rachaPedidos} días consecutivos</div>
-              </div>
-            </div>
-            <div className={styles.clientInfoItem}>
-              <span className={styles.clientInfoIcon} aria-hidden="true">
-                <ShoppingCartIcon />
-              </span>
-              <div className={styles.clientInfoContent}>
-                <div className={styles.clientInfoLabel}>Platillo preferido</div>
-                <div className={styles.clientInfoValue}>{clientData.platilloPreferido}</div>
-              </div>
+      <section className={styles.clientInfoCard} aria-label="Información del cliente">
+        <h2 className={styles.clientInfoTitle}>Información del cliente</h2>
+        <div className={styles.clientInfoList}>
+          <div className={styles.clientInfoItem}>
+            <span className={styles.clientInfoIcon} aria-hidden="true">
+              <IdentificationIcon />
+            </span>
+            <div className={styles.clientInfoContent}>
+              <div className={styles.clientInfoLabel}>ID de Cliente</div>
+              <div className={styles.clientInfoValue}>{clientData.idCliente}</div>
             </div>
           </div>
-        </section>
-      </div>
+          <div className={styles.clientInfoItem}>
+            <span className={styles.clientInfoIcon} aria-hidden="true">
+              <FireIcon />
+            </span>
+            <div className={styles.clientInfoContent}>
+              <div className={styles.clientInfoLabel}>Racha de pedidos</div>
+              <div className={styles.clientInfoValue}>{clientData.rachaPedidos} días consecutivos</div>
+            </div>
+          </div>
+          <div className={styles.clientInfoItem}>
+            <span className={styles.clientInfoIcon} aria-hidden="true">
+              <ShoppingCartIcon />
+            </span>
+            <div className={styles.clientInfoContent}>
+              <div className={styles.clientInfoLabel}>Platillo preferido</div>
+              <div className={styles.clientInfoValue}>{clientData.platilloPreferido}</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Sección media: Métricas y Bonos */}
       <section className={styles.metricsSection} aria-label="Métricas y bonos">
