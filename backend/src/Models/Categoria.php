@@ -38,6 +38,7 @@ class Categoria {
     public function create(array $data): array {
         $nombre = trim((string)($data['nombre'] ?? ''));
         $descripcion = isset($data['descripcion']) ? trim((string)$data['descripcion']) : null;
+        $tipo = isset($data['tipo_categoria']) ? strtolower((string)$data['tipo_categoria']) : 'producto';
 
         if ($nombre === '' || strlen($nombre) < 2) {
             throw new \Exception("El nombre es requerido y debe tener al menos 2 caracteres");
@@ -49,6 +50,11 @@ class Categoria {
             throw new \Exception("La descripción no puede exceder 1000 caracteres");
         }
 
+        // Validar tipo de categoría
+        if (!in_array($tipo, ['insumo', 'producto'], true)) {
+            throw new \Exception("El tipo de categoría debe ser 'insumo' o 'producto'");
+        }
+
         // Unicidad case-insensitive
         $stmt = $this->db->prepare("SELECT id_categoria FROM categoria WHERE LOWER(nombre) = LOWER(?)");
         $stmt->execute([$nombre]);
@@ -56,8 +62,8 @@ class Categoria {
             throw new \Exception("Ya existe una categoría con ese nombre");
         }
 
-        $stmt = $this->db->prepare("INSERT INTO categoria (nombre, descripcion) VALUES (?, ?)");
-        $stmt->execute([$nombre, $descripcion]);
+        $stmt = $this->db->prepare("INSERT INTO categoria (nombre, descripcion, tipo_categoria) VALUES (?, ?, ?)");
+        $stmt->execute([$nombre, $descripcion, $tipo]);
 
         return [
             'success' => true,
@@ -69,6 +75,7 @@ class Categoria {
     public function update(int $id, array $data): array {
         $nombre = trim((string)($data['nombre'] ?? ''));
         $descripcion = isset($data['descripcion']) ? trim((string)$data['descripcion']) : null;
+        $tipo = isset($data['tipo_categoria']) ? strtolower((string)$data['tipo_categoria']) : 'producto';
 
         if ($id <= 0) {
             throw new \Exception("ID inválido");
@@ -81,6 +88,10 @@ class Categoria {
         }
         if ($descripcion !== null && strlen($descripcion) > 1000) {
             throw new \Exception("La descripción no puede exceder 1000 caracteres");
+        }
+
+        if (!in_array($tipo, ['insumo', 'producto'], true)) {
+            throw new \Exception("El tipo de categoría debe ser 'insumo' o 'producto'");
         }
 
         // Existe
@@ -97,8 +108,8 @@ class Categoria {
             throw new \Exception("Ya existe otra categoría con ese nombre");
         }
 
-        $stmt = $this->db->prepare("UPDATE categoria SET nombre = ?, descripcion = ? WHERE id_categoria = ?");
-        $stmt->execute([$nombre, $descripcion, $id]);
+        $stmt = $this->db->prepare("UPDATE categoria SET nombre = ?, descripcion = ?, tipo_categoria = ? WHERE id_categoria = ?");
+        $stmt->execute([$nombre, $descripcion, $tipo, $id]);
 
         return [
             'success' => true,
