@@ -5,11 +5,9 @@ import {
   UserIcon,
   ShoppingCartIcon,
   ArrowRightOnRectangleIcon,
-  BoltIcon,
   TagIcon
 } from '@heroicons/react/24/outline';
 import Nav from '../components/Nav';
-import Footer from '../components/Footer';
 import styles from '../assets/css/UserLayout.module.css';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -25,18 +23,18 @@ const UserLayout = () => {
   const navItems = useMemo(
     () => {
       const items = [
-        { id: 'dashboard', label: 'Dashboard', icon: <ChartBarIcon />, hasArrow: true, to: `${basePath}/dashboard` },
+        { id: 'dashboard', label: 'Dashboard', icon: <ChartBarIcon />, to: `${basePath}/dashboard` },
       ];
 
       if (esCliente) {
         items.push(
-          { id: 'orders', label: 'Mis pedidos', icon: <ShoppingCartIcon />, hasArrow: true, to: `${basePath}/pedidos` },
-          { id: 'promotions', label: 'Promociones', icon: <TagIcon />, hasArrow: true, to: `${basePath}/promociones` },
+          { id: 'orders', label: 'Mis pedidos', icon: <ShoppingCartIcon />, to: `${basePath}/pedidos` },
+          { id: 'promotions', label: 'Promociones', icon: <TagIcon />, to: `${basePath}/promociones` },
         );
       } else {
         items.push(
-          { id: 'profile', label: 'Mi perfil', icon: <UserIcon />, hasArrow: true, to: '/user/profile' },
-          { id: 'orders', label: 'Mis pedidos', icon: <ShoppingCartIcon />, hasArrow: true, to: `${basePath}/dashboard` },
+          { id: 'profile', label: 'Mi perfil', icon: <UserIcon />, to: '/user/profile' },
+          { id: 'orders', label: 'Mis pedidos', icon: <ShoppingCartIcon />, to: '/user/pedidos' },
         );
       }
 
@@ -53,7 +51,8 @@ const UserLayout = () => {
       else if (p.includes('/clients/promociones')) setActiveItem('promotions');
       else setActiveItem('dashboard');
     } else {
-      if (p.includes('/user/profile') || p.includes('/profile')) setActiveItem('profile');
+      if (p.includes('/user/pedidos')) setActiveItem('orders');
+      else if (p.includes('/user/profile') || p.includes('/profile')) setActiveItem('profile');
       else setActiveItem('dashboard');
     }
   }, [location.pathname, esCliente]);
@@ -73,12 +72,6 @@ const UserLayout = () => {
   return (
     <div className={styles.layout}>
       <aside className={styles.sidebar} role="complementary">
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <BoltIcon />
-          </div>
-          <span className={styles.logoText}>Dashboard v.01</span>
-        </div>
         <nav className={styles.navSection} role="navigation">
           <Nav 
             items={navItems} 
@@ -97,7 +90,6 @@ const UserLayout = () => {
         <div className={styles.contentArea}>
           <Outlet />
         </div>
-        <Footer />
       </main>
     </div>
   );
