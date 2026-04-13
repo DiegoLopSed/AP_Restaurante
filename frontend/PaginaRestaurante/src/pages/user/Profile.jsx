@@ -1,3 +1,26 @@
+/**
+ * Profile.jsx
+ * 
+ * Componente para la visualización del perfil del usuario.
+ * 
+ * Funcionalidades:
+ * - Muestra una sección informativa del perfil
+ * - Indica el estado actual de la página (en construcción)
+ * 
+ * Características:
+ * - Uso de estilos reutilizables del dashboard
+ * - Estructura preparada para futuras funcionalidades
+ * 
+ * Nota:
+ * Este módulo servirá para visualizar y editar datos del usuario
+ * en futuras versiones del sistema.
+ * 
+ * @package AP_Restaurante
+ * @subpackage Profile.jsx
+ * @author Andres Manuel Amaro Ramirez
+ * @version 1.0.0
+ */
+
 import styles from '../../assets/css/ManagerDashboard.module.css';
 
 const UserProfile = () => {
