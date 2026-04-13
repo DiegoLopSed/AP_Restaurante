@@ -1,3 +1,37 @@
+/**
+ * Dashboard.jsx
+ * 
+ * Panel principal del usuario (colaborador) dentro del sistema.
+ * 
+ * Funcionalidades principales:
+ * - Visualización de información básica del usuario autenticado
+ * - Consulta y listado de pedidos finalizados asociados al usuario
+ * - Cálculo de métricas (total de pedidos y monto acumulado)
+ * - Renderizado de tabla con historial de registros
+ * - Sección de información adicional (estado, horario, actividad)
+ * - Visualización de datos laborales (RFC, nómina, puesto, departamento)
+ * 
+ * Características:
+ * - Uso de contexto de autenticación (useAuth)
+ * - Manejo de estados: carga, error y datos vacíos
+ * - Optimización de cálculos con useMemo
+ * - Formateo de fechas en formato local (es-MX)
+ * 
+ * Integraciones:
+ * - fetchPedidosRegistrosFinalizados(): obtiene pedidos finalizados del usuario
+ * - Table: componente reutilizable para mostrar datos tabulares
+ * - Heroicons: iconografía visual
+ * 
+ * Nota:
+ * Este dashboard está enfocado al rol operativo (ej. meseros),
+ * mostrando únicamente los pedidos que han finalizado.
+ * 
+ * @package AP_Restaurante
+ * @subpackage UserDashboard.jsx
+ * @author Andres Manuel Amaro Ramirez
+ * @version 1.0.0
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import styles from '../../assets/css/ManagerDashboard.module.css';
 import {
@@ -12,6 +46,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import Table from '../../components/Table';
 import { fetchPedidosRegistrosFinalizados } from '../../services/pedidos';
 
+/**
+ * Formatea fechas a formato local (México)
+ */
 function formatearFechaHora(val) {
   if (!val) return '—';
   try {
@@ -25,51 +62,80 @@ function formatearFechaHora(val) {
 }
 
 const UserDashboard = () => {
+
+  /**
+   * Usuario autenticado desde contexto
+   */
   const { usuario } = useAuth();
+
+  /**
+   * Estados de registros
+   */
   const [registros, setRegistros] = useState([]);
   const [registrosLoading, setRegistrosLoading] = useState(true);
   const [registrosError, setRegistrosError] = useState('');
 
+  /**
+   * Carga de pedidos finalizados del usuario
+   */
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       setRegistrosLoading(true);
       setRegistrosError('');
+
       try {
         const data = await fetchPedidosRegistrosFinalizados();
         if (!cancelled) setRegistros(data);
       } catch (e) {
         if (!cancelled) {
           setRegistros([]);
-          setRegistrosError(e?.message || 'No se pudieron cargar los registros');
+          setRegistrosError(
+            e?.message || 'No se pudieron cargar los registros'
+          );
         }
       } finally {
         if (!cancelled) setRegistrosLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
   }, []);
 
+  /**
+   * Resumen de métricas
+   */
   const resumenRegistros = useMemo(() => {
     const n = registros.length;
-    const monto = registros.reduce((acc, p) => acc + Number(p.total || 0), 0);
+    const monto = registros.reduce(
+      (acc, p) => acc + Number(p.total || 0),
+      0
+    );
     return { n, monto };
   }, [registros]);
 
+  /**
+   * Columnas de la tabla
+   */
   const columnasRegistros = useMemo(
     () => [
       { key: 'nombre_cliente', label: 'Cliente' },
       {
         key: 'total',
         label: 'Total',
-        render: (_, row) => `$${Number(row.total || 0).toFixed(2)}`,
+        render: (_, row) =>
+          `$${Number(row.total || 0).toFixed(2)}`,
       },
       {
         key: 'metodo_pago_nombre',
         label: 'Pago',
-        render: (v) => (v != null && String(v).trim() !== '' ? String(v).trim() : '—'),
+        render: (v) =>
+          v != null && String(v).trim() !== ''
+            ? String(v).trim()
+            : '—',
       },
       {
         key: 'hora_salida',
@@ -80,8 +146,13 @@ const UserDashboard = () => {
     []
   );
 
+  /**
+   * Datos del usuario para visualización
+   */
   const userData = {
-    nombre: usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Colaborador',
+    nombre: usuario
+      ? `${usuario.nombre} ${usuario.apellido}`
+      : 'Colaborador',
     rfc: usuario?.rfc || 'N/D',
     numeroNomina: usuario?.id_colaborador || 'N/D',
     puesto: usuario?.posicion || 'Sin posición asignada',
@@ -92,6 +163,9 @@ const UserDashboard = () => {
     estado: 'Activo',
   };
 
+  /**
+   * Información adicional del usuario
+   */
   const additionalInfo = [
     {
       id: 1,
@@ -115,20 +189,18 @@ const UserDashboard = () => {
 
   return (
     <div className={styles.dashboard}>
+
+      {/* Saludo */}
       <h1 className={styles.greeting}>
         Hola {userData.nombre.split(' ')[0]} 👋
       </h1>
 
-      <section className={styles.additionalInfoCard} aria-label="Registros de pedidos finalizados">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: 'var(--spacing-md)',
-            flexWrap: 'wrap',
-          }}
-        >
+      {/* Sección de registros */}
+      <section
+        className={styles.additionalInfoCard}
+        aria-label="Registros de pedidos finalizados"
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 'var(--spacing-md)', flexWrap: 'wrap' }}>
           <span
             style={{
               display: 'flex',
@@ -140,67 +212,41 @@ const UserDashboard = () => {
               background: 'var(--color-secondary)',
               color: 'var(--color-primary)',
             }}
-            aria-hidden
           >
             <ClipboardDocumentListIcon style={{ width: 22, height: 22 }} />
           </span>
+
           <h2 className={styles.additionalInfoTitle} style={{ marginBottom: 0 }}>
             Registros
           </h2>
         </div>
-        <p
-          style={{
-            margin: '0 0 var(--spacing-md) 0',
-            fontSize: 'var(--font-size-small)',
-            color: 'var(--color-text-light)',
-          }}
-        >
-          Resumen de pedidos que has finalizado (solo estatus finalizado). Coinciden con tu nombre como
-          mesero en el sistema.
+
+        <p style={{ marginBottom: 'var(--spacing-md)', fontSize: 'var(--font-size-small)', color: 'var(--color-text-light)' }}>
+          Resumen de pedidos que has finalizado en el sistema.
         </p>
 
+        {/* Error */}
         {registrosError && (
-          <div
-            style={{
-              padding: '12px',
-              background: '#fee2e2',
-              color: '#b91c1c',
-              borderRadius: '8px',
-              marginBottom: '16px',
-            }}
-          >
+          <div style={{ padding: '12px', background: '#fee2e2', color: '#b91c1c', borderRadius: '8px', marginBottom: '16px' }}>
             {registrosError}
           </div>
         )}
 
+        {/* Resumen */}
         {!registrosLoading && !registrosError && (
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 'var(--spacing-lg)',
-              marginBottom: 'var(--spacing-lg)',
-            }}
-          >
+          <div style={{ display: 'flex', gap: 'var(--spacing-lg)', marginBottom: 'var(--spacing-lg)' }}>
             <div>
-              <div style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-light)' }}>
-                Pedidos finalizados
-              </div>
-              <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-text)' }}>
-                {resumenRegistros.n}
-              </div>
+              <div>Pedidos finalizados</div>
+              <strong>{resumenRegistros.n}</strong>
             </div>
             <div>
-              <div style={{ fontSize: 'var(--font-size-small)', color: 'var(--color-text-light)' }}>
-                Monto total registrado
-              </div>
-              <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-text)' }}>
-                ${resumenRegistros.monto.toFixed(2)}
-              </div>
+              <div>Monto total</div>
+              <strong>${resumenRegistros.monto.toFixed(2)}</strong>
             </div>
           </div>
         )}
 
+        {/* Tabla */}
         <Table
           columns={columnasRegistros}
           data={registros}
@@ -208,58 +254,59 @@ const UserDashboard = () => {
           emptyMessage={
             registrosLoading
               ? 'Cargando registros…'
-              : 'No hay pedidos finalizados a tu nombre. Al cerrar pedidos en Mis pedidos, aparecerán aquí.'
+              : 'No hay pedidos finalizados.'
           }
         />
       </section>
 
-      <section className={styles.additionalInfoCard} aria-label="Información adicional">
-        <h2 className={styles.additionalInfoTitle}>Información adicional</h2>
+      {/* Información adicional */}
+      <section className={styles.additionalInfoCard}>
+        <h2 className={styles.additionalInfoTitle}>
+          Información adicional
+        </h2>
+
         <div className={styles.additionalInfoList}>
           {additionalInfo.map((item) => (
             <div key={item.id} className={styles.additionalInfoItem}>
-              <span className={styles.additionalInfoIcon} aria-hidden="true">
+              <span className={styles.additionalInfoIcon}>
                 {item.icon}
               </span>
-              <div className={styles.additionalInfoContent}>
-                <div className={styles.additionalInfoLabel}>{item.label}</div>
-                <div className={styles.additionalInfoDescription}>{item.description}</div>
+              <div>
+                <div>{item.label}</div>
+                <div>{item.description}</div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className={styles.contactGrid} aria-label="Detalles del empleado">
+      {/* Datos del empleado */}
+      <section className={styles.contactGrid}>
         <article className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <IdentificationIcon />
-          </div>
-          <div className={styles.contactLabel}>RFC</div>
-          <div className={styles.contactValue}>{userData.rfc}</div>
+          <IdentificationIcon />
+          <div>RFC</div>
+          <div>{userData.rfc}</div>
         </article>
+
         <article className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <IdentificationIcon />
-          </div>
-          <div className={styles.contactLabel}>Número de nómina</div>
-          <div className={styles.contactValue}>{userData.numeroNomina}</div>
+          <IdentificationIcon />
+          <div>Nómina</div>
+          <div>{userData.numeroNomina}</div>
         </article>
+
         <article className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <BriefcaseIcon />
-          </div>
-          <div className={styles.contactLabel}>Puesto</div>
-          <div className={styles.contactValue}>{userData.puesto}</div>
+          <BriefcaseIcon />
+          <div>Puesto</div>
+          <div>{userData.puesto}</div>
         </article>
+
         <article className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <BriefcaseIcon />
-          </div>
-          <div className={styles.contactLabel}>Departamento</div>
-          <div className={styles.contactValue}>{userData.departamento}</div>
+          <BriefcaseIcon />
+          <div>Departamento</div>
+          <div>{userData.departamento}</div>
         </article>
       </section>
+
     </div>
   );
 };
