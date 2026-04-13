@@ -8,6 +8,10 @@
  * este archivo delega a `conection.php`.
  *
  * Nota: el nombre `conection.php` se conserva por compatibilidad histórica del proyecto.
+ * @package AP_Restaurante
+ * @subpackage database.php
+ * @author  Diego Lopez Sedeño
+ * @version 1.0.0
  */
 
 require_once __DIR__ . '/conection.php';
