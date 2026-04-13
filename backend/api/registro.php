@@ -1,47 +1,63 @@
 <?php
 /**
  * API REST para registro de usuarios
- * Endpoint público que delega al controlador
+ * 
+ * Endpoint público encargado de gestionar el alta de nuevos usuarios
+ * en el sistema. Recibe los datos desde el cliente y delega la lógica
+ * al controlador correspondiente.
+ * 
+ * Funcionalidades:
+ * - Registro de nuevos usuarios
+ * - Validación de datos mediante el controlador
+ * - Respuesta en formato JSON
+ * 
+ * Características:
+ * - Manejo centralizado de errores
+ * - Uso de buffer de salida para evitar respuestas corruptas
+ * - Retorno estructurado para consumo del frontend
+ * 
+ * @package AP_Restaurante
+ * @subpackage Registro.php
+ * @author Ana Karen Romero Flores
+ * @version 1.0.0
  */
 
-// IMPORTANTE: Esto debe ser lo primero, antes de CUALQUIER otra cosa
-// Configurar error handler personalizado para capturar todos los errores
+// Manejo de errores: convierte errores en excepciones
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    // Convertir errores a excepciones para que se capturen en el catch
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
 
-// Desactivar completamente la salida de errores en pantalla
+// Configuración de errores (no mostrar en pantalla)
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 ini_set('log_errors', 1);
 
-// Iniciar buffer de salida ANTES de cualquier require
+// Iniciar buffer de salida
 ob_start();
 
 try {
     require_once __DIR__ . '/../src/Controllers/RegistroController.php';
-    
-    // Limpiar cualquier salida capturada
+
+    // Limpiar cualquier salida previa
     ob_clean();
-    
-    // Usar el nombre completo de la clase en lugar de 'use'
+
+    // Ejecutar controlador
     $controller = new \App\Controllers\RegistroController();
     $controller->handleRequest();
-    
+
 } catch (Throwable $e) {
-    // Limpiar cualquier salida previa (incluyendo errores de PHP)
+    // Limpiar salida en caso de error
     ob_clean();
-    
+
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
+
     echo json_encode([
         'success' => false,
         'message' => 'Error: ' . $e->getMessage()
     ], JSON_UNESCAPED_UNICODE);
 }
 
-// Enviar y limpiar buffer
+// Enviar buffer final
 ob_end_flush();
-
