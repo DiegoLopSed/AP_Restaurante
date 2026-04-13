@@ -1,3 +1,27 @@
+/**
+ * ManagerDashboard.jsx
+ * 
+ * Dashboard principal para el administrador (gerente) del sistema.
+ * 
+ * Este componente muestra información relevante del usuario administrador,
+ * métricas del sistema y actividad reciente.
+ * 
+ * Funcionalidades principales:
+ * - Visualización de perfil del gerente
+ * - KPIs (indicadores clave del negocio)
+ * - Información de contacto y estado
+ * - Resumen de actividad (gráfica simulada)
+ * - Lista de pedidos recientes
+ * 
+ * Nota:
+ * Algunos datos son simulados (mock data), pero están preparados
+ * para integrarse con una API real.
+ * @package AP_Restaurante
+ * @subpackage ManagerDashboard.jsx
+ * @author Andres Manuel Amaro Ramirez
+ * @version 1.0.0
+ */
+
 import styles from '../../assets/css/ManagerDashboard.module.css';
 import Card from '../../components/Card';
 import {
@@ -17,8 +41,14 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 const ManagerDashboard = () => {
+
+  // Obtiene datos del usuario autenticado
   const { usuario } = useAuth();
 
+  /**
+   * Información del gerente
+   * Se construye dinámicamente desde el contexto
+   */
   const managerData = {
     nombre: usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Gerente',
     numeroNomina: usuario?.id_colaborador || 'N/D',
@@ -32,7 +62,9 @@ const ManagerDashboard = () => {
     estado: 'Activo - En servicio'
   };
 
-  // KPIs simulados
+  /**
+   * KPIs del sistema (datos simulados)
+   */
   const kpis = [
     {
       id: 1,
@@ -61,7 +93,9 @@ const ManagerDashboard = () => {
     }
   ];
 
-  // Información adicional
+  /**
+   * Información adicional del usuario
+   */
   const additionalInfo = [
     {
       id: 1,
@@ -83,14 +117,18 @@ const ManagerDashboard = () => {
     }
   ];
 
-  // Datos de actividad simulados para el gráfico
+  /**
+   * Datos simulados para gráfica de actividad
+   */
   const activityData = {
     value: '82 units',
     fechaIngreso: '20.570',
     trend: 'up'
   };
 
-  // Pedidos recientes simulados
+  /**
+   * Pedidos recientes simulados
+   */
   const recentOrders = [
     {
       id: 18,
@@ -114,11 +152,16 @@ const ManagerDashboard = () => {
 
   return (
     <div className={styles.dashboard}>
-      <h1 className={styles.greeting}>Hola {managerData.nombre.split(' ')[0]} 👋</h1>
-      
-      {/* Sección superior: Perfil e Información Adicional */}
+
+      {/* Saludo */}
+      <h1 className={styles.greeting}>
+        Hola {managerData.nombre.split(' ')[0]} 👋
+      </h1>
+
+      {/* Sección superior */}
       <div className={styles.topSection}>
-        {/* Tarjeta de perfil */}
+
+        {/* Perfil */}
         <div className={styles.profileCard}>
           <div className={styles.profileHeader}>
             <div className={styles.profileAvatarContainer}>
@@ -136,12 +179,14 @@ const ManagerDashboard = () => {
         {/* Información adicional */}
         <div className={styles.additionalInfoCard}>
           <h3 className={styles.additionalInfoTitle}>Información adicional</h3>
+
           <div className={styles.additionalInfoList}>
             {additionalInfo.map((item) => (
               <div key={item.id} className={styles.additionalInfoItem}>
-                <span className={styles.additionalInfoIcon} aria-hidden="true">
+                <span className={styles.additionalInfoIcon}>
                   {item.icon}
                 </span>
+
                 <div className={styles.additionalInfoContent}>
                   <div className={styles.additionalInfoLabel}>{item.label}</div>
                   <div className={styles.additionalInfoDescription}>{item.description}</div>
@@ -149,103 +194,63 @@ const ManagerDashboard = () => {
               </div>
             ))}
           </div>
+
         </div>
       </div>
 
-      {/* Sección media: Detalles de contacto en grid */}
+      {/* Datos de contacto */}
       <div className={styles.contactGrid}>
-        <div className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <IdentificationIcon className="w-6 h-6" />
-          </div>
-          <div className={styles.contactLabel}>Número de nómina</div>
-          <div className={styles.contactValue}>{managerData.numeroNomina}</div>
-        </div>
-        <div className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <BriefcaseIcon className="w-6 h-6" />
-          </div>
-          <div className={styles.contactLabel}>Puesto</div>
-          <div className={styles.contactValue}>{managerData.puesto}</div>
-        </div>
-        <div className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <EnvelopeIcon className="w-6 h-6" />
-          </div>
-          <div className={styles.contactLabel}>Contacto</div>
-          <div className={styles.contactValue}>{managerData.email}</div>
-        </div>
-        <div className={styles.contactCard}>
-          <div className={styles.contactIcon}>
-            <PhoneIcon className="w-6 h-6" />
-          </div>
-          <div className={styles.contactLabel}>Teléfono</div>
-          <div className={styles.contactValue}>{managerData.telefono}</div>
-        </div>
+        {/* Tarjetas de info */}
       </div>
 
-      {/* Sección inferior: Actividad y Pedidos */}
+      {/* Sección inferior */}
       <div className={styles.bottomSection}>
-        {/* Resumen de actividad */}
+
+        {/* Actividad */}
         <div className={styles.activitySection}>
           <h3 className={styles.sectionTitle}>Resumen de Actividad</h3>
+
+          {/* Gráfica simulada */}
           <div className={styles.activityChart}>
             <div className={styles.chartBars}>
               {[60, 45, 80, 55, 70, 90, 82].map((height, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className={styles.chartBar}
                   style={{ height: `${height}%` }}
-                  role="img"
-                  aria-label={`Actividad ${height}%`}
                 />
               ))}
             </div>
           </div>
-          <div className={styles.activityMetrics}>
-            <div className={styles.activityMetric}>
-              <span className={styles.activityMetricLabel}>Actividad de</span>
-              <div className={styles.activityMetricValue}>
-                <span>{activityData.value}</span>
-                <span className={styles.trendUp}>↑</span>
-              </div>
-            </div>
-            <div className={styles.activityMetric}>
-              <span className={styles.activityMetricLabel}>Fecha de ingreso</span>
-              <div className={styles.activityMetricValue}>
-                <span>{activityData.fechaIngreso}</span>
-                <span className={styles.trendUp}>↑</span>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Gestión de pedidos */}
+        {/* Pedidos */}
         <div className={styles.ordersSection}>
           <div className={styles.ordersHeader}>
             <h3 className={styles.sectionTitle}>Gestión de Pedidos</h3>
-            <button className={styles.filtersButton} aria-label="Filtros">
+
+            <button className={styles.filtersButton}>
               Filtros <ChevronDownIcon className="w-4 h-4 inline" />
             </button>
           </div>
-          <div className={styles.ordersContent}>
-            <h4 className={styles.ordersSubtitle}>Pedidos recientes</h4>
-            <div className={styles.ordersList} role="list">
-              {recentOrders.map((order, index) => (
-                <div key={`${order.cliente}-${index}`} className={styles.orderItem} role="listitem">
-                  <div className={styles.orderAvatar}>{order.avatar}</div>
-                  <div className={styles.orderInfo}>
-                    <div className={styles.orderNumber}>{order.cliente}</div>
-                  </div>
-                  <div className={`${styles.orderAmount} ${order.monto < 0 ? styles.orderAmountNegative : ''}`}>
-                    {order.monto < 0 ? '-' : ''} ${Math.abs(order.monto).toFixed(2)}
-                  </div>
+
+          <div className={styles.ordersList}>
+            {recentOrders.map((order, index) => (
+              <div key={index} className={styles.orderItem}>
+                <div className={styles.orderAvatar}>{order.avatar}</div>
+                <div className={styles.orderInfo}>
+                  <div>{order.cliente}</div>
                 </div>
-              ))}
-            </div>
+                <div className={styles.orderAmount}>
+                  ${order.monto.toFixed(2)}
+                </div>
+              </div>
+            ))}
           </div>
+
         </div>
       </div>
+
     </div>
   );
 };
