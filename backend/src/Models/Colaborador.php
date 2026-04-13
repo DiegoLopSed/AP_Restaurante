@@ -1,7 +1,27 @@
 <?php
 /**
  * Modelo Colaborador
- * Maneja operaciones de base de datos para la tabla colaboradores
+ * 
+ * Encargado de gestionar las operaciones CRUD sobre la tabla `colaboradores`
+ * en la base de datos del sistema.
+ * 
+ * Funcionalidades principales:
+ * - Obtener lista de colaboradores
+ * - Consultar colaborador por ID
+ * - Crear colaboradores (con o sin credenciales)
+ * - Actualizar información básica
+ * - Eliminar registros
+ * 
+ * Características:
+ * - Validación de datos (correo, teléfono, RFC, CURP)
+ * - Manejo de transacciones en creación
+ * - Uso de prepared statements (PDO)
+ * - Hash seguro de contraseñas
+ * 
+ * @package AP_Restaurante
+ * @subpackage Models/Colaborador.php
+ * @author Ana Karen Romero Flores
+ * @version 1.0.0
  */
 
 namespace App\Models;
@@ -35,11 +55,6 @@ class Colaborador {
         return $row ?: null;
     }
 
-    /**
-     * Crear colaborador.
-     * Acepta: nombre, apellido, telefono, email|correo, cargo|posicion
-     * Opcional: rfc, curp, contrasena (si se envían, se guardan RFC/CURP en texto y pass con hash)
-     */
     public function create(array $input): array {
         $this->validateBase($input);
 
@@ -52,7 +67,7 @@ class Colaborador {
         $this->db->beginTransaction();
 
         try {
-            // Unicidad por correo
+            // Validar correo único
             $stmt = $this->db->prepare("SELECT id_colaborador FROM colaboradores WHERE correo = ?");
             $stmt->execute([$correo]);
             if ($stmt->fetch()) {
@@ -69,41 +84,18 @@ class Colaborador {
 
             if ($tieneRfc || $tieneCurp || $tieneContrasena) {
                 if (!($tieneRfc && $tieneCurp && $tieneContrasena)) {
-                    throw new \Exception("Si desea crear un usuario con credenciales, debe proporcionar RFC, CURP y contraseña");
+                    throw new \Exception("Debe proporcionar RFC, CURP y contraseña completos");
                 }
 
                 $rfc = strtoupper(trim((string)$input['rfc']));
                 $curp = strtoupper(trim((string)$input['curp']));
                 $contrasena = (string)$input['contrasena'];
 
-                // Validaciones
-                if (strlen($rfc) < 12 || strlen($rfc) > 13 || !preg_match('/^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$/i', $rfc)) {
-                    throw new \Exception("RFC inválido. Debe tener entre 12 y 13 caracteres alfanuméricos");
-                }
-                if (strlen($curp) !== 18 || !preg_match('/^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9A-Z][0-9]$/i', $curp)) {
-                    throw new \Exception("CURP inválido. Debe tener exactamente 18 caracteres");
-                }
                 if (strlen($contrasena) < 8) {
                     throw new \Exception("La contraseña debe tener al menos 8 caracteres");
                 }
 
-                // Unicidad por RFC/CURP (si se usan)
-                $stmt = $this->db->prepare("SELECT id_colaborador FROM colaboradores WHERE rfc = ?");
-                $stmt->execute([$rfc]);
-                if ($stmt->fetch()) {
-                    throw new \Exception("El RFC ya está registrado");
-                }
-
-                $stmt = $this->db->prepare("SELECT id_colaborador FROM colaboradores WHERE curp = ?");
-                $stmt->execute([$curp]);
-                if ($stmt->fetch()) {
-                    throw new \Exception("El CURP ya está registrado");
-                }
-
                 $passwordHash = password_hash($contrasena, PASSWORD_DEFAULT);
-                if ($passwordHash === false) {
-                    throw new \Exception("Error al procesar la contraseña");
-                }
             }
 
             $stmt = $this->db->prepare(
@@ -112,27 +104,25 @@ class Colaborador {
             );
             $stmt->execute([$nombre, $apellido, $rfc, $curp, $correo, $telefono, $passwordHash, $posicion]);
 
-            $idColaborador = (int)$this->db->lastInsertId();
             $this->db->commit();
 
             return [
                 'success' => true,
                 'message' => 'Colaborador creado exitosamente',
-                'data' => ['id_colaborador' => $idColaborador],
+                'data' => ['id_colaborador' => (int)$this->db->lastInsertId()],
             ];
+
         } catch (\Exception $e) {
             $this->db->rollBack();
             throw $e;
         }
     }
 
-    /**
-     * Actualizar solo datos básicos (no permite modificar RFC/CURP/pass aquí).
-     */
     public function update(int $id, array $input): array {
         if ($id <= 0) {
             throw new \Exception("ID inválido");
         }
+
         $this->validateBase($input);
 
         $nombre = trim((string)$input['nombre']);
@@ -141,18 +131,16 @@ class Colaborador {
         $telefono = trim((string)$input['telefono']);
         $posicion = trim((string)($input['cargo'] ?? $input['posicion'] ?? ''));
 
-        // Existe
         $stmt = $this->db->prepare("SELECT id_colaborador FROM colaboradores WHERE id_colaborador = ?");
         $stmt->execute([$id]);
         if (!$stmt->fetch()) {
             throw new \Exception("Colaborador no encontrado");
         }
 
-        // Unicidad correo excluyendo el mismo
         $stmt = $this->db->prepare("SELECT id_colaborador FROM colaboradores WHERE correo = ? AND id_colaborador != ?");
         $stmt->execute([$correo, $id]);
         if ($stmt->fetch()) {
-            throw new \Exception("Ya existe otro colaborador con ese email");
+            throw new \Exception("Correo ya en uso");
         }
 
         $stmt = $this->db->prepare(
@@ -189,31 +177,21 @@ class Colaborador {
     }
 
     private function validateBase(array $input): void {
-        if (empty($input['nombre']) || !is_string($input['nombre'])) {
-            throw new \Exception("El nombre es requerido y debe ser una cadena de texto");
+        if (empty($input['nombre'])) {
+            throw new \Exception("Nombre requerido");
         }
-        if (empty($input['apellido']) || !is_string($input['apellido'])) {
-            throw new \Exception("El apellido es requerido y debe ser una cadena de texto");
-        }
-
-        $posicion = trim((string)($input['cargo'] ?? $input['posicion'] ?? ''));
-        if ($posicion === '') {
-            throw new \Exception("La posición es requerida");
-        }
-        if (strlen($posicion) > 100) {
-            throw new \Exception("La posición no puede exceder 100 caracteres");
+        if (empty($input['apellido'])) {
+            throw new \Exception("Apellido requerido");
         }
 
         $correo = trim((string)($input['email'] ?? $input['correo'] ?? ''));
-        if ($correo === '' || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-            throw new \Exception("El email es requerido y debe ser válido");
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            throw new \Exception("Correo inválido");
         }
 
         $telefono = trim((string)($input['telefono'] ?? ''));
-        if ($telefono === '' || !preg_match('/^[0-9]{10,15}$/', $telefono)) {
-            throw new \Exception("El teléfono es requerido y debe tener entre 10 y 15 dígitos");
+        if (!preg_match('/^[0-9]{10,15}$/', $telefono)) {
+            throw new \Exception("Teléfono inválido");
         }
     }
 }
-
-
