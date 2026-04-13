@@ -1,3 +1,32 @@
+/**
+ * HomePage.jsx
+ * 
+ * Página principal pública del sistema del restaurante.
+ * 
+ * Funcionalidades principales:
+ * - Renderizado de la página de inicio con secciones informativas
+ * - Efecto dinámico en el header al hacer scroll
+ * - Navegación hacia el menú mediante React Router
+ * - Uso de imágenes placeholder configurables
+ * - Integración con componente de navegación pública
+ * 
+ * Secciones incluidas:
+ * - Hero (branding principal)
+ * - Presentación del restaurante
+ * - Principales comidas destacadas
+ * - Información del negocio (horarios y ubicación)
+ * - Newsletter / novedades
+ * 
+ * Nota:
+ * Esta vista es completamente estática por ahora,
+ * pero está preparada para integrarse con datos dinámicos desde API.
+ * 
+ * @package AP_Restaurante
+ * @subpackage HomePage.jsx
+ * @author Andres Manuel Amaro Ramirez
+ * @version 1.0.0
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/homepage-scoped.css';
@@ -5,9 +34,20 @@ import PublicNav from '../components/PublicNav';
 import { PLACEHOLDERS, APP_TEXT } from '../config/constants';
 
 const HomePage = () => {
+
+  /**
+   * Estado para detectar scroll y modificar header
+   */
   const [isScrolled, setIsScrolled] = useState(false);
+
+  /**
+   * Hook de navegación
+   */
   const navigate = useNavigate();
 
+  /**
+   * Efecto para detectar el scroll y aplicar estilos dinámicos al header
+   */
   useEffect(() => {
     const header = document.getElementById('main-header');
     const heroSection = document.querySelector('.hero');
@@ -28,7 +68,7 @@ const HomePage = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Verificar posición inicial
+    handleScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -37,107 +77,114 @@ const HomePage = () => {
 
   return (
     <div className="homepage-wrapper">
-      {/* Encabezado y Navegación */}
+
+      {/* Navegación pública */}
       <PublicNav />
 
-      {/* Sección Hero */}
+      {/* Sección principal (Hero) */}
       <section className="hero">
-        <h1 className="animate__animated animate__fadeInUp">{APP_TEXT.BRAND_NAME}</h1>
+        <h1 className="animate__animated animate__fadeInUp">
+          {APP_TEXT.BRAND_NAME}
+        </h1>
       </section>
 
-      {/* Sección de Presentación */}
+      {/* Sección de presentación */}
       <section className="presentacion">
         <div>
           <h2>Presentación</h2>
           <p>Body text for your whole article or post...</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </p>
         </div>
         <div>
-          <img src={PLACEHOLDERS.DISH.LARGE} alt="Plato destacado del restaurante" />
+          <img
+            src={PLACEHOLDERS.DISH.LARGE}
+            alt="Plato destacado del restaurante"
+          />
         </div>
       </section>
 
-      {/* Sección de Principales Comidas */}
+      {/* Sección de productos destacados */}
       <section className="principales-comidas">
         <h2>Principales comidas</h2>
+
         <div className="comidas-grid">
           <article>
             <img src={PLACEHOLDERS.PRODUCT.MEDIUM} alt="Sushi" />
             <h3>Subtitulo</h3>
             <p>Descripcion general de producto</p>
           </article>
+
           <article>
             <img src={PLACEHOLDERS.PRODUCT.MEDIUM} alt="Carne" />
             <h3>Subtitulo</h3>
             <p>Descripcion general de producto</p>
           </article>
+
           <article>
             <img src={PLACEHOLDERS.PRODUCT.MEDIUM} alt="Alitas" />
             <h3>Subtitulo</h3>
             <p>Descripcion general de producto</p>
           </article>
         </div>
-        <button type="button" onClick={() => navigate('/menu')}>¡Conoce todo el menú!</button>
+
+        {/* Botón para navegar al menú */}
+        <button type="button" onClick={() => navigate('/menu')}>
+          ¡Conoce todo el menú!
+        </button>
       </section>
 
-      {/* Sección de Información del Negocio */}
+      {/* Información del negocio */}
       <section className="informacion-negocio">
         <div className="horarios-visitanos">
+
+          {/* Horarios */}
           <div className="horarios-container">
             <h2>Horarios de atención</h2>
+
             <div className="horarios-lista">
-              <div className="horario-item">
-                <span className="dia">LUNES</span>
-                <span className="horas">10:00 A 19:00 HS</span>
-              </div>
-              <div className="horario-item">
-                <span className="dia">MARTES</span>
-                <span className="horas">10:00 A 19:00 HS</span>
-              </div>
-              <div className="horario-item">
-                <span className="dia">MIÉRCOLES</span>
-                <span className="horas">10:00 A 19:00 HS</span>
-              </div>
-              <div className="horario-item">
-                <span className="dia">JUEVES</span>
-                <span className="horas">10:00 A 19:00 HS</span>
-              </div>
-              <div className="horario-item">
-                <span className="dia">VIERNES</span>
-                <span className="horas">10:00 A 19:00 HS</span>
-              </div>
-              <div className="horario-item">
-                <span className="dia">SÁBADO</span>
-                <span className="horas">10:00 A 19:00 HS</span>
-              </div>
-              <div className="horario-item">
-                <span className="dia">DOMINGO</span>
-                <span className="horas">CERRADO</span>
-              </div>
+              <div className="horario-item"><span>LUNES</span><span>10:00 A 19:00 HS</span></div>
+              <div className="horario-item"><span>MARTES</span><span>10:00 A 19:00 HS</span></div>
+              <div className="horario-item"><span>MIÉRCOLES</span><span>10:00 A 19:00 HS</span></div>
+              <div className="horario-item"><span>JUEVES</span><span>10:00 A 19:00 HS</span></div>
+              <div className="horario-item"><span>VIERNES</span><span>10:00 A 19:00 HS</span></div>
+              <div className="horario-item"><span>SÁBADO</span><span>10:00 A 19:00 HS</span></div>
+              <div className="horario-item"><span>DOMINGO</span><span>CERRADO</span></div>
             </div>
           </div>
+
+          {/* Imagen del restaurante */}
           <div className="imagen-container">
-            <img src={PLACEHOLDERS.RESTAURANT.MEDIUM} alt="Imagen del restaurante" />
+            <img
+              src={PLACEHOLDERS.RESTAURANT.MEDIUM}
+              alt="Imagen del restaurante"
+            />
           </div>
+
+          {/* Sección de ubicación */}
           <div className="visitanos-container">
-            <div className="visitanos-section">
+            <div>
               <h2>¡Visítanos!</h2>
               <p>Encuéntranos en..</p>
               <p>Dirección...</p>
             </div>
-            <button type="button">Como llegar</button>
+
+            <button type="button">
+              Como llegar
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Sección de Newsletter/Trends */}
+      {/* Newsletter */}
       <section className="newsletter">
         <h2>Sigue las ultimas novedades</h2>
         <p>daily</p>
       </section>
+
     </div>
   );
 };
 
 export default HomePage;
-
