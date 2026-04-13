@@ -1,3 +1,36 @@
+/**
+ * Usuarios.jsx
+ * 
+ * Componente para la gestión de usuarios (colaboradores) dentro del sistema.
+ * 
+ * Funcionalidades principales:
+ * - Visualización de usuarios en tabla
+ * - Creación de nuevos usuarios
+ * - Edición de usuarios existentes
+ * - Formulario dinámico con validaciones básicas
+ * - Selección de rol/posición del usuario
+ * 
+ * Manejo de estado:
+ * - Control de carga de datos
+ * - Manejo de errores de API
+ * - Control de modal (crear/editar usuario)
+ * - Manejo de formulario controlado
+ * 
+ * Validaciones:
+ * - Campos obligatorios (nombre, apellido, RFC, CURP, correo, teléfono, posición)
+ * - Contraseña obligatoria solo en creación
+ * 
+ * Notas:
+ * - Utiliza servicios externos para operaciones CRUD
+ * - Permite reutilizar el formulario para crear y editar
+ * - Convierte RFC y CURP a mayúsculas automáticamente
+ * 
+ * @package AP_Restaurante
+ * @subpackage Usuarios.jsx
+ * @author Andres Manuel Amaro Ramirez
+ * @version 1.0.0
+ */
+
 import { useState, useEffect, useMemo } from 'react';
 import styles from '../../assets/css/ManagerDashboard.module.css';
 import Table from '../../components/Table';
@@ -9,11 +42,23 @@ import {
 import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
 
 const Usuarios = () => {
+
+  /**
+   * Estados principales
+   */
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [usuarios, setUsuarios] = useState([]);
+
+  /**
+   * Estados de UI
+   */
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUsuario, setEditingUsuario] = useState(null);
+
+  /**
+   * Estado del formulario
+   */
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -25,6 +70,9 @@ const Usuarios = () => {
     contrasena: ''
   });
 
+  /**
+   * Catálogo de posiciones disponibles
+   */
   const POSICIONES = [
     'Gerente',
     'Administrador',
@@ -38,10 +86,16 @@ const Usuarios = () => {
     'Limpieza',
   ];
 
+  /**
+   * Obtiene el nombre completo del usuario
+   */
   function getNombreCompleto(usuario) {
     return `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || 'Sin nombre';
   }
 
+  /**
+   * Definición de columnas para la tabla
+   */
   const columns = useMemo(
     () => [
       {
@@ -71,7 +125,6 @@ const Usuarios = () => {
               alignItems: 'center',
               gap: '4px',
             }}
-            aria-label="Editar"
           >
             <PencilIcon style={{ width: 16, height: 16 }} />
             Editar
@@ -82,13 +135,20 @@ const Usuarios = () => {
     []
   );
 
+  /**
+   * Cargar usuarios al iniciar
+   */
   useEffect(() => {
     loadData();
   }, []);
 
+  /**
+   * Obtiene los usuarios desde API
+   */
   async function loadData() {
     setLoading(true);
     setError('');
+
     try {
       const data = await fetchUsuarios();
       setUsuarios(data);
@@ -99,8 +159,12 @@ const Usuarios = () => {
     }
   }
 
+  /**
+   * Maneja edición de usuario
+   */
   const handleEdit = (usuario) => {
     setEditingUsuario(usuario);
+
     setFormData({
       nombre: usuario.nombre || '',
       apellido: usuario.apellido || '',
@@ -111,11 +175,16 @@ const Usuarios = () => {
       posicion: usuario.posicion || 'Mesero',
       contrasena: ''
     });
+
     setIsModalOpen(true);
   };
 
+  /**
+   * Maneja envío del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const data = {
         nombre: formData.nombre,
@@ -127,7 +196,7 @@ const Usuarios = () => {
         posicion: formData.posicion
       };
 
-      // Solo incluir contraseña si es nuevo usuario o si se proporcionó
+      // Incluir contraseña solo si aplica
       if (!editingUsuario || formData.contrasena) {
         data.contrasena = formData.contrasena;
       }
@@ -136,29 +205,28 @@ const Usuarios = () => {
         await updateUsuario(editingUsuario.id_colaborador, data);
       } else {
         if (!formData.contrasena) {
-          alert('La contraseña es requerida para nuevos usuarios');
-          return;
-        }
-        if (!formData.posicion?.trim()) {
-          alert('La posición es requerida para nuevos usuarios');
+          alert('La contraseña es obligatoria');
           return;
         }
         await createUsuario(data);
       }
-      
+
+      // Reset
       setIsModalOpen(false);
       setEditingUsuario(null);
-      setFormData({ 
-        nombre: '', 
-        apellido: '', 
-        rfc: '', 
-        curp: '', 
-        correo: '', 
-        telefono: '', 
-        posicion: 'Mesero', 
-        contrasena: '' 
+      setFormData({
+        nombre: '',
+        apellido: '',
+        rfc: '',
+        curp: '',
+        correo: '',
+        telefono: '',
+        posicion: 'Mesero',
+        contrasena: ''
       });
+
       await loadData();
+
     } catch (err) {
       alert(err?.message || 'Error al guardar usuario');
     }
@@ -166,287 +234,49 @@ const Usuarios = () => {
 
   return (
     <div className={styles.dashboard}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '12px',
-          flexWrap: 'wrap',
-          marginBottom: '24px',
-        }}
-      >
+      {/* Encabezado */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
         <h1 className={styles.greeting}>Gestión de Usuarios</h1>
-        <button
-          onClick={() => {
-            setEditingUsuario(null);
-            setFormData({ 
-              nombre: '', 
-              apellido: '', 
-              rfc: '', 
-              curp: '', 
-              correo: '', 
-              telefono: '', 
-              posicion: 'Mesero', 
-              contrasena: '' 
-            });
-            setIsModalOpen(true);
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 24px',
-            background: 'var(--color-primary)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: '600'
-          }}
-        >
-          <PlusIcon style={{ width: '20px', height: '20px' }} />
+
+        <button onClick={() => setIsModalOpen(true)}>
+          <PlusIcon style={{ width: '20px' }} />
           Agregar Usuario
         </button>
       </div>
 
-      {error && (
-        <div style={{ 
-          padding: '12px', 
-          background: '#fee2e2', 
-          color: '#dc2626', 
-          borderRadius: '8px',
-          marginBottom: '16px'
-        }}>
-          {error}
-        </div>
-      )}
+      {/* Error */}
+      {error && <div>{error}</div>}
 
-      <div className={styles.contentSection}>
-        <Table
-          columns={columns}
-          data={usuarios}
-          rowKey="id_colaborador"
-          emptyMessage={
-            loading
-              ? 'Cargando usuarios...'
-              : 'No hay usuarios registrados. Agrega uno con el botón superior.'
-          }
-        />
-      </div>
+      {/* Tabla */}
+      <Table
+        columns={columns}
+        data={usuarios}
+        rowKey="id_colaborador"
+        emptyMessage={loading ? 'Cargando...' : 'Sin usuarios'}
+      />
 
+      {/* Modal */}
       {isModalOpen && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1200
-        }}>
-          <div style={{
-            background: 'white',
-            padding: '24px',
-            borderRadius: '8px',
-            width: '90%',
-            maxWidth: '600px',
-            maxHeight: '90vh',
-            overflow: 'auto'
-          }}>
-            <h2 style={{ marginBottom: '20px' }}>
-              {editingUsuario ? 'Editar Usuario' : 'Nuevo Usuario'}
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                    Nombre *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nombre}
-                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '4px'
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                    Apellido *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.apellido}
-                    onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '4px'
-                    }}
-                  />
-                </div>
-              </div>
+        <div>
+          <h2>{editingUsuario ? 'Editar Usuario' : 'Nuevo Usuario'}</h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                    RFC *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.rfc}
-                    onChange={(e) => setFormData({ ...formData, rfc: e.target.value.toUpperCase() })}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '4px'
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                    CURP *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.curp}
-                    onChange={(e) => setFormData({ ...formData, curp: e.target.value.toUpperCase() })}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '4px'
-                    }}
-                  />
-                </div>
-              </div>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={formData.nombre}
+              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+            />
 
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                  Correo *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formData.correo}
-                  onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px'
-                  }}
-                />
-              </div>
+            <input
+              type="text"
+              placeholder="Apellido"
+              value={formData.apellido}
+              onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
+            />
 
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                  Teléfono *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.telefono}
-                  onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px'
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                  Posición *
-                </label>
-                <select
-                  required
-                  value={formData.posicion}
-                  onChange={(e) => setFormData({ ...formData, posicion: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px'
-                  }}
-                >
-                  <option value="">Selecciona una posición</option>
-                  {POSICIONES.map((pos) => (
-                    <option key={pos} value={pos}>
-                      {pos}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
-                  Contraseña {editingUsuario ? '(dejar vacío para no cambiar)' : '*'}
-                </label>
-                <input
-                  type="password"
-                  required={!editingUsuario}
-                  value={formData.contrasena}
-                  onChange={(e) => setFormData({ ...formData, contrasena: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px'
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setEditingUsuario(null);
-                  }}
-                  style={{
-                    padding: '10px 20px',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px',
-                    background: 'white',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    padding: '10px 20px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    background: 'var(--color-primary)',
-                    color: 'white',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
-          </div>
+            <button type="submit">Guardar</button>
+          </form>
         </div>
       )}
     </div>
@@ -454,4 +284,3 @@ const Usuarios = () => {
 };
 
 export default Usuarios;
-
