@@ -1,7 +1,26 @@
 <?php
 /**
  * Modelo Insumo
- * Maneja todas las operaciones de base de datos para la tabla insumo
+ * 
+ * Gestiona todas las operaciones relacionadas con la tabla `insumo`
+ * dentro de la base de datos del sistema.
+ * 
+ * Funcionalidades principales:
+ * - Obtener insumos (todos, por ID o por categoría)
+ * - Crear, actualizar y eliminar insumos
+ * - Búsqueda por nombre
+ * - Consulta de categorías asociadas
+ * 
+ * Características:
+ * - Uso de PDO con prepared statements
+ * - Validación básica de datos
+ * - Manejo de excepciones
+ * - Prevención de valores inválidos (ej. stock negativo)
+ * 
+ * @package AP_Restaurante
+ * @subpackage Models/Insumo.php
+ * @author Ana Karen Romero Flores
+ * @version 1.0.0
  */
 
 namespace App\Models;
@@ -15,25 +34,18 @@ class Insumo {
         $this->db = getDB();
     }
     
-    /**
-     * Obtener todos los insumos con información de categoría
-     */
     public function getAll() {
         try {
             $sql = "SELECT i.*, c.nombre as categoria_nombre, c.descripcion as categoria_descripcion 
                     FROM insumo i 
                     INNER JOIN categoria c ON i.id_categoria = c.id_categoria 
                     ORDER BY i.nombre ASC";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll();
+            return $this->db->query($sql)->fetchAll();
         } catch (\PDOException $e) {
             throw new \Exception("Error al obtener insumos: " . $e->getMessage());
         }
     }
     
-    /**
-     * Obtener un insumo por ID
-     */
     public function getById($id) {
         try {
             $sql = "SELECT i.*, c.nombre as categoria_nombre, c.descripcion as categoria_descripcion 
@@ -43,70 +55,49 @@ class Insumo {
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
             $stmt->execute();
-            
-            $insumo = $stmt->fetch();
-            if (!$insumo) {
-                return null;
-            }
-            
-            return $insumo;
+            return $stmt->fetch() ?: null;
         } catch (\PDOException $e) {
             throw new \Exception("Error al obtener insumo: " . $e->getMessage());
         }
     }
     
-    /**
-     * Crear un nuevo insumo
-     */
     public function create($data) {
         try {
-            // Validar datos requeridos
             if (empty($data['nombre']) || empty($data['id_categoria'])) {
-                throw new \Exception("El nombre y la categoría son requeridos");
+                throw new \Exception("Nombre y categoría son requeridos");
             }
             
             $sql = "INSERT INTO insumo (id_categoria, nombre, stock, fecha_ultimo_pedido) 
-                    VALUES (:id_categoria, :nombre, :stock, :fecha_ultimo_pedido)";
+                    VALUES (:id_categoria, :nombre, :stock, :fecha)";
             
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_categoria', $data['id_categoria'], \PDO::PARAM_INT);
-            $stmt->bindParam(':nombre', $data['nombre'], \PDO::PARAM_STR);
-            
-            // Stock: cantidad entera (por defecto 0)
-            $stock = isset($data['stock']) ? (int)$data['stock'] : 0;
-            if ($stock < 0) {
-                $stock = 0; // No permitir valores negativos
-            }
-            $stmt->bindValue(':stock', $stock, \PDO::PARAM_INT);
-            
-            // Fecha opcional
+
+            $stock = isset($data['stock']) ? max(0, (int)$data['stock']) : 0;
             $fecha = !empty($data['fecha_ultimo_pedido']) ? $data['fecha_ultimo_pedido'] : null;
-            $stmt->bindParam(':fecha_ultimo_pedido', $fecha, \PDO::PARAM_STR);
-            
-            $stmt->execute();
+
+            $stmt->execute([
+                ':id_categoria' => $data['id_categoria'],
+                ':nombre' => $data['nombre'],
+                ':stock' => $stock,
+                ':fecha' => $fecha
+            ]);
             
             return [
-                'id' => $this->db->lastInsertId(),
                 'success' => true,
-                'message' => 'Insumo creado exitosamente'
+                'message' => 'Insumo creado exitosamente',
+                'id' => $this->db->lastInsertId()
             ];
         } catch (\PDOException $e) {
             throw new \Exception("Error al crear insumo: " . $e->getMessage());
         }
     }
     
-    /**
-     * Actualizar un insumo existente
-     */
     public function update($id, $data) {
         try {
-            // Verificar que el insumo existe
-            $insumo = $this->getById($id);
-            if (!$insumo) {
+            if (!$this->getById($id)) {
                 throw new \Exception("Insumo no encontrado");
             }
             
-            // Construir query dinámicamente solo con los campos proporcionados
             $fields = [];
             $params = [':id' => $id];
             
@@ -122,31 +113,21 @@ class Insumo {
             
             if (isset($data['stock'])) {
                 $fields[] = "stock = :stock";
-                $stock = (int)$data['stock'];
-                if ($stock < 0) {
-                    $stock = 0; // No permitir valores negativos
-                }
-                $params[':stock'] = $stock;
+                $params[':stock'] = max(0, (int)$data['stock']);
             }
             
             if (isset($data['fecha_ultimo_pedido'])) {
-                $fields[] = "fecha_ultimo_pedido = :fecha_ultimo_pedido";
-                $params[':fecha_ultimo_pedido'] = !empty($data['fecha_ultimo_pedido']) ? $data['fecha_ultimo_pedido'] : null;
+                $fields[] = "fecha_ultimo_pedido = :fecha";
+                $params[':fecha'] = $data['fecha_ultimo_pedido'] ?: null;
             }
             
             if (empty($fields)) {
-                throw new \Exception("No hay campos para actualizar");
+                throw new \Exception("No hay datos para actualizar");
             }
             
             $sql = "UPDATE insumo SET " . implode(', ', $fields) . " WHERE id_insumo = :id";
             $stmt = $this->db->prepare($sql);
-            
-            foreach ($params as $key => $value) {
-                $paramType = is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR;
-                $stmt->bindValue($key, $value, $paramType);
-            }
-            
-            $stmt->execute();
+            $stmt->execute($params);
             
             return [
                 'success' => true,
@@ -157,85 +138,66 @@ class Insumo {
         }
     }
     
-    /**
-     * Eliminar un insumo
-     */
     public function delete($id) {
         try {
-            // Verificar que el insumo existe
-            $insumo = $this->getById($id);
-            if (!$insumo) {
+            if (!$this->getById($id)) {
                 throw new \Exception("Insumo no encontrado");
             }
             
-            $sql = "DELETE FROM insumo WHERE id_insumo = :id";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
-            $stmt->execute();
+            $stmt = $this->db->prepare("DELETE FROM insumo WHERE id_insumo = :id");
+            $stmt->execute([':id' => $id]);
             
             return [
                 'success' => true,
                 'message' => 'Insumo eliminado exitosamente'
             ];
         } catch (\PDOException $e) {
-            // Si hay una restricción de clave foránea, informar al usuario
             if ($e->getCode() == '23000') {
-                throw new \Exception("No se puede eliminar el insumo porque está siendo utilizado en otras tablas");
+                throw new \Exception("No se puede eliminar porque está en uso");
             }
             throw new \Exception("Error al eliminar insumo: " . $e->getMessage());
         }
     }
     
-    /**
-     * Obtener todas las categorías (para dropdowns)
-     */
     public function getCategorias() {
         try {
-            $sql = "SELECT id_categoria, nombre, descripcion FROM categoria ORDER BY nombre ASC";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll();
+            return $this->db->query(
+                "SELECT id_categoria, nombre, descripcion FROM categoria ORDER BY nombre ASC"
+            )->fetchAll();
         } catch (\PDOException $e) {
             throw new \Exception("Error al obtener categorías: " . $e->getMessage());
         }
     }
     
-    /**
-     * Obtener insumos por categoría
-     */
     public function getByCategoria($id_categoria) {
         try {
-            $sql = "SELECT i.*, c.nombre as categoria_nombre 
-                    FROM insumo i 
-                    INNER JOIN categoria c ON i.id_categoria = c.id_categoria 
-                    WHERE i.id_categoria = :id_categoria 
-                    ORDER BY i.nombre ASC";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id_categoria', $id_categoria, \PDO::PARAM_INT);
-            $stmt->execute();
+            $stmt = $this->db->prepare(
+                "SELECT i.*, c.nombre as categoria_nombre 
+                 FROM insumo i 
+                 INNER JOIN categoria c ON i.id_categoria = c.id_categoria 
+                 WHERE i.id_categoria = :id 
+                 ORDER BY i.nombre ASC"
+            );
+            $stmt->execute([':id' => $id_categoria]);
             return $stmt->fetchAll();
         } catch (\PDOException $e) {
-            throw new \Exception("Error al obtener insumos por categoría: " . $e->getMessage());
+            throw new \Exception("Error al filtrar insumos: " . $e->getMessage());
         }
     }
     
-    /**
-     * Buscar insumos por nombre
-     */
-    public function search($searchTerm) {
+    public function search($term) {
         try {
-            $sql = "SELECT i.*, c.nombre as categoria_nombre 
-                    FROM insumo i 
-                    INNER JOIN categoria c ON i.id_categoria = c.id_categoria 
-                    WHERE i.nombre LIKE :search 
-                    ORDER BY i.nombre ASC";
-            $stmt = $this->db->prepare($sql);
-            $searchPattern = '%' . $searchTerm . '%';
-            $stmt->bindParam(':search', $searchPattern, \PDO::PARAM_STR);
-            $stmt->execute();
+            $stmt = $this->db->prepare(
+                "SELECT i.*, c.nombre as categoria_nombre 
+                 FROM insumo i 
+                 INNER JOIN categoria c ON i.id_categoria = c.id_categoria 
+                 WHERE i.nombre LIKE :term 
+                 ORDER BY i.nombre ASC"
+            );
+            $stmt->execute([':term' => "%$term%"]);
             return $stmt->fetchAll();
         } catch (\PDOException $e) {
             throw new \Exception("Error al buscar insumos: " . $e->getMessage());
         }
     }
 }
-
